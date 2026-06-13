@@ -1,0 +1,2705 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>منصة لِكس برو — إدارة مكاتب المحاماة | سلطنة عُمان</title>
+<meta name="description" content="نظام متكامل لإدارة مكاتب المحاماة في سلطنة عُمان: قضايا، جلسات، موكّلون، أتعاب، تذكيرات، وبوابة خاصة لكل دور." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Reem+Kufi:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===================== DESIGN TOKENS ===================== */
+:root{
+  /* Brand: Omani emerald ink + antique gold on parchment.
+     Distinct from the generic cream+terracotta / black+acid-green defaults. */
+  --ink:#0b3d2e;          /* deep emerald ink */
+  --ink-2:#0f5740;        /* lighter emerald */
+  --ink-soft:#1c6b50;
+  --gold:#b8893a;         /* antique gold */
+  --gold-2:#d8a94a;       /* bright gold */
+  --gold-soft:#f3e6c8;
+  --sand:#f7f3ea;         /* parchment surface */
+  --sand-2:#efe8d8;
+  --paper:#fffdf8;        /* card paper */
+  --line:#e3dcc9;
+  --line-2:#d6cdb4;
+  --text:#1d2420;         /* near-black green */
+  --muted:#5f6b62;
+  --muted-2:#8a948b;
+  --danger:#a6362f;
+  --danger-soft:#f7e2df;
+  --ok:#2f7d54;
+  --ok-soft:#dcefe2;
+  --warn:#b5760f;
+  --warn-soft:#f8eccf;
+  --info:#2a5d80;
+  --info-soft:#dbe9f1;
+  --shadow-sm:0 1px 2px rgba(11,61,46,.06), 0 1px 3px rgba(11,61,46,.05);
+  --shadow:0 4px 14px rgba(11,61,46,.08), 0 2px 6px rgba(11,61,46,.05);
+  --shadow-lg:0 18px 50px rgba(11,61,46,.16), 0 6px 18px rgba(11,61,46,.08);
+  --radius:16px;
+  --radius-sm:11px;
+  --radius-lg:24px;
+  --font-d:'Reem Kufi', 'Tajawal', sans-serif;     /* display */
+  --font-b:'Tajawal', sans-serif;                  /* body */
+  --font-m:'IBM Plex Mono', monospace;             /* data/mono */
+  --maxw:1280px;
+}
+:root[data-theme="dark"]{
+  --ink:#d8a94a;
+  --ink-2:#e3bd66;
+  --ink-soft:#caa358;
+  --sand:#0e1512;
+  --sand-2:#13201a;
+  --paper:#172420;
+  --line:#243831;
+  --line-2:#2f463d;
+  --text:#eef3ee;
+  --muted:#a6b3a9;
+  --muted-2:#7d8a80;
+  --gold-soft:#2a2417;
+  --ok-soft:#16291f;
+  --danger-soft:#2c1816;
+  --warn-soft:#2a2310;
+  --info-soft:#13212b;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  --shadow:0 6px 18px rgba(0,0,0,.4);
+  --shadow-lg:0 22px 60px rgba(0,0,0,.55);
+}
+
+/* ===================== RESET ===================== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-b);
+  background:var(--sand);
+  color:var(--text);
+  line-height:1.6;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background .4s ease, color .4s ease;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{max-width:100%;display:block}
+::selection{background:var(--gold-soft);color:var(--ink)}
+:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px;border-radius:6px}
+input,select,textarea{outline:none}
+
+/* scrollbar */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:10px;border:2px solid var(--sand)}
+*::-webkit-scrollbar-thumb:hover{background:var(--muted-2)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+
+/* ===================== UTILITIES ===================== */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-m);font-feature-settings:"tnum";direction:ltr;unicode-bidi:plaintext}
+.hide{display:none!important}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.row{display:flex;align-items:center;gap:12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.col{display:flex;flex-direction:column}
+.gap-sm{gap:8px}.gap{gap:16px}.gap-lg{gap:24px}
+.grow{flex:1}
+.wrap-flex{flex-wrap:wrap}
+
+/* ===================== BUTTONS ===================== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px 22px;border-radius:var(--radius-sm);
+  font-family:var(--font-d);font-weight:600;font-size:.96rem;
+  background:var(--paper);color:var(--text);
+  border:1.5px solid var(--line-2);
+  transition:transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s, color .2s;
+  white-space:nowrap;line-height:1;
+}
+.btn:hover{transform:translateY(-1.5px);box-shadow:var(--shadow)}
+.btn:active{transform:translateY(0)}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+.btn-primary{
+  background:linear-gradient(135deg, var(--ink-2), var(--ink));
+  color:#fff;border-color:transparent;
+  box-shadow:0 4px 14px rgba(11,61,46,.28);
+}
+:root[data-theme="dark"] .btn-primary{color:#0b1410}
+.btn-primary:hover{box-shadow:0 8px 22px rgba(11,61,46,.36)}
+.btn-gold{
+  background:linear-gradient(135deg, var(--gold-2), var(--gold));
+  color:#3a2a08;border-color:transparent;
+  box-shadow:0 4px 14px rgba(184,137,58,.3);
+}
+.btn-gold:hover{box-shadow:0 8px 22px rgba(184,137,58,.4)}
+.btn-ghost{background:transparent;border-color:transparent}
+.btn-ghost:hover{background:var(--sand-2);box-shadow:none;transform:none}
+.btn-danger{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.btn-sm{padding:8px 15px;font-size:.86rem;border-radius:9px}
+.btn-sm svg{width:15px;height:15px}
+.btn-icon{padding:10px;border-radius:10px;width:42px;height:42px}
+.btn-icon.btn-sm{width:34px;height:34px;padding:7px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ===================== BADGES / PILLS ===================== */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 11px;border-radius:999px;
+  font-size:.78rem;font-weight:700;font-family:var(--font-d);
+  background:var(--sand-2);color:var(--muted);
+  border:1px solid var(--line);line-height:1.4;
+}
+.badge-gold{background:var(--gold-soft);color:var(--gold);border-color:transparent}
+.badge-ink{background:rgba(15,87,64,.12);color:var(--ink);border-color:transparent}
+.badge-ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.badge-warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.badge-danger{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.badge-info{background:var(--info-soft);color:var(--info);border-color:transparent}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+/* ===================== CARDS ===================== */
+.card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);
+  transition:box-shadow .25s ease, transform .25s ease, border-color .25s;
+}
+.card-pad{padding:22px}
+.card-hover:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--line-2)}
+
+/* ===================== FORM FIELDS ===================== */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label{font-weight:700;font-size:.88rem;font-family:var(--font-d);color:var(--text)}
+.field label .req{color:var(--danger)}
+.input,.select,.textarea{
+  width:100%;padding:12px 14px;
+  background:var(--sand);
+  border:1.5px solid var(--line-2);
+  border-radius:var(--radius-sm);
+  font-size:.96rem;color:var(--text);
+  transition:border-color .18s, box-shadow .18s, background .18s;
+}
+.input::placeholder,.textarea::placeholder{color:var(--muted-2)}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:var(--ink-soft);
+  box-shadow:0 0 0 4px rgba(15,87,64,.1);
+  background:var(--paper);
+}
+.textarea{resize:vertical;min-height:96px;line-height:1.6}
+.select{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f6b62' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 14px center;padding-left:38px;
+}
+.field-hint{font-size:.78rem;color:var(--muted-2)}
+.field-error{font-size:.8rem;color:var(--danger);font-weight:600}
+.input-group{position:relative}
+.input-group .input{padding-right:42px}
+.input-group .ig-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted-2);pointer-events:none}
+.input-group .ig-icon svg{width:18px;height:18px}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.anim-up{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
+.anim-in{animation:fadeIn .5s ease both}
+.anim-scale{animation:scaleIn .4s cubic-bezier(.16,1,.3,1) both}
+.stagger>*{opacity:0;animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards}
+.stagger>*:nth-child(1){animation-delay:.05s}
+.stagger>*:nth-child(2){animation-delay:.11s}
+.stagger>*:nth-child(3){animation-delay:.17s}
+.stagger>*:nth-child(4){animation-delay:.23s}
+.stagger>*:nth-child(5){animation-delay:.29s}
+.stagger>*:nth-child(6){animation-delay:.35s}
+.stagger>*:nth-child(7){animation-delay:.41s}
+.stagger>*:nth-child(8){animation-delay:.47s}
+
+.spinner{width:18px;height:18px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
+/* ===================== TOAST ===================== */
+.toast{
+  pointer-events:auto;width:100%;
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-radius:var(--radius-sm);
+  background:var(--paper);border:1px solid var(--line);
+  box-shadow:var(--shadow-lg);
+  animation:slideDown .35s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.toast.leaving{animation:fadeOut .3s ease forwards}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-12px)}}
+.toast-ico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+.toast-ico svg{width:19px;height:19px}
+.toast.ok .toast-ico{background:var(--ok-soft);color:var(--ok)}
+.toast.err .toast-ico{background:var(--danger-soft);color:var(--danger)}
+.toast.info .toast-ico{background:var(--info-soft);color:var(--info)}
+.toast.warn .toast-ico{background:var(--warn-soft);color:var(--warn)}
+.toast-body{flex:1;min-width:0}
+.toast-title{font-weight:800;font-family:var(--font-d);font-size:.92rem}
+.toast-msg{font-size:.84rem;color:var(--muted);margin-top:2px}
+
+/* ===================== MODAL ===================== */
+.modal-overlay{
+  position:fixed;inset:0;z-index:8000;
+  background:rgba(11,30,22,.55);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  animation:fadeIn .25s ease both;
+}
+.modal{
+  background:var(--paper);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);border:1px solid var(--line);
+  width:min(560px,100%);max-height:90vh;overflow:hidden;
+  display:flex;flex-direction:column;
+  animation:scaleIn .3s cubic-bezier(.16,1,.3,1) both;
+}
+.modal.lg{width:min(820px,100%)}
+.modal.sm{width:min(420px,100%)}
+.modal-head{
+  padding:20px 24px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-shrink:0;
+}
+.modal-head h3{font-family:var(--font-d);font-size:1.18rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.modal-head .mh-ico{width:38px;height:38px;border-radius:10px;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center}
+.modal-head .mh-ico svg{width:20px;height:20px}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+.modal-foot{
+  padding:16px 24px;border-top:1px solid var(--line);
+  display:flex;gap:12px;justify-content:flex-start;flex-shrink:0;background:var(--sand)
+}
+.modal-x{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--muted);transition:background .15s}
+.modal-x:hover{background:var(--sand-2)}
+.modal-x svg{width:18px;height:18px}
+
+/* ===================== LANDING ===================== */
+.lp{background:var(--sand);min-height:100vh;position:relative;overflow:hidden}
+.lp-nav{
+  position:sticky;top:0;z-index:100;
+  background:color-mix(in srgb, var(--sand) 82%, transparent);
+  backdrop-filter:blur(14px);border-bottom:1px solid transparent;
+  transition:border-color .3s, box-shadow .3s;
+}
+.lp-nav.scrolled{border-color:var(--line);box-shadow:var(--shadow-sm)}
+.lp-nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:var(--maxw);margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--font-d);font-weight:700}
+.brand-mark{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--ink-2),var(--ink));
+  display:grid;place-items:center;color:var(--gold-2);
+  box-shadow:0 4px 12px rgba(11,61,46,.3);position:relative;overflow:hidden;
+}
+.brand-mark svg{width:24px;height:24px;position:relative;z-index:1}
+.brand-mark::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(216,169,74,.35),transparent 60%)}
+.brand-name{font-size:1.32rem;line-height:1;letter-spacing:-.5px}
+.brand-name b{color:var(--ink)}
+.brand-sub{font-size:.66rem;color:var(--muted);font-weight:500;margin-top:3px;letter-spacing:.5px}
+.lp-nav-links{display:flex;align-items:center;gap:6px}
+.lp-nav-links a{padding:9px 14px;border-radius:9px;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .15s,background .15s}
+.lp-nav-links a:hover{color:var(--ink);background:var(--sand-2)}
+
+/* hero */
+.hero{position:relative;padding:70px 0 90px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;background:var(--gold-soft);color:var(--gold);font-weight:700;font-size:.8rem;font-family:var(--font-d);margin-bottom:24px;border:1px solid color-mix(in srgb,var(--gold) 22%, transparent)}
+.hero-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft);animation:pulse 2.4s ease-in-out infinite}
+.hero h1{font-family:var(--font-d);font-size:clamp(2.3rem,5vw,3.7rem);line-height:1.12;font-weight:700;letter-spacing:-1px;margin-bottom:22px}
+.hero h1 .accent{color:var(--ink);position:relative;display:inline-block}
+.hero h1 .accent::after{content:"";position:absolute;bottom:6px;right:0;left:0;height:14px;background:var(--gold-soft);z-index:-1;border-radius:3px}
+.hero p.lead{font-size:1.16rem;color:var(--muted);max-width:540px;margin-bottom:34px;line-height:1.75}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+.hero-cta .btn{padding:15px 28px;font-size:1.02rem}
+.hero-trust{display:flex;gap:28px;flex-wrap:wrap}
+.hero-trust-item{display:flex;flex-direction:column;gap:2px}
+.hero-trust-item .num{font-family:var(--font-d);font-size:1.7rem;font-weight:800;color:var(--ink);line-height:1}
+.hero-trust-item .lbl{font-size:.82rem;color:var(--muted)}
+
+/* hero visual: stacked dashboard preview */
+.hero-visual{position:relative;height:480px}
+.hv-card{position:absolute;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:18px;animation:floatY 7s ease-in-out infinite}
+.hv-main{inset:20px 0 20px 40px;left:auto;right:0;width:84%;animation-delay:0s;z-index:2}
+.hv-mini{top:0;left:0;width:50%;z-index:3;animation-delay:1.5s}
+.hv-mini2{bottom:0;left:14px;width:44%;z-index:3;animation-delay:.8s}
+.hv-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.hv-dot{width:10px;height:10px;border-radius:50%}
+.hv-title{font-family:var(--font-d);font-weight:700;font-size:.96rem;margin-right:auto}
+.hv-row{display:flex;align-items:center;gap:10px;padding:9px 0}
+.hv-avatar{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--ink-soft),var(--ink));flex-shrink:0;display:grid;place-items:center;color:#fff;font-size:.74rem;font-weight:800}
+.hv-line{height:8px;border-radius:4px;background:var(--sand-2)}
+.hv-stat{display:flex;flex-direction:column;gap:4px}
+.hv-stat .v{font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:var(--ink)}
+.hv-stat .l{font-size:.7rem;color:var(--muted)}
+.hv-bars{display:flex;align-items:flex-end;gap:7px;height:70px;margin-top:10px}
+.hv-bar{flex:1;border-radius:5px 5px 0 0;background:linear-gradient(var(--gold-2),var(--gold))}
+.hero-glow{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);opacity:.5;z-index:0;pointer-events:none}
+.hg1{background:radial-gradient(circle,rgba(184,137,58,.4),transparent 70%);top:-120px;left:-100px}
+.hg2{background:radial-gradient(circle,rgba(15,87,64,.3),transparent 70%);bottom:-140px;right:-80px}
+
+/* sections */
+.section{padding:80px 0;position:relative}
+.section-head{text-align:center;max-width:680px;margin:0 auto 56px}
+.section-eyebrow{font-family:var(--font-d);font-weight:700;color:var(--gold);font-size:.86rem;letter-spacing:1px;margin-bottom:14px;text-transform:uppercase}
+.section-head h2{font-family:var(--font-d);font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:700;letter-spacing:-.5px;margin-bottom:16px;line-height:1.2}
+.section-head p{font-size:1.08rem;color:var(--muted);line-height:1.7}
+.section.alt{background:var(--sand-2)}
+
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--gold)}
+.feat-ico{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;background:var(--gold-soft);color:var(--gold)}
+.feat-ico svg{width:26px;height:26px}
+.feat h3{font-family:var(--font-d);font-size:1.18rem;font-weight:700;margin-bottom:9px}
+.feat p{color:var(--muted);font-size:.96rem;line-height:1.65}
+
+.roles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.role-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px;text-align:center;transition:transform .25s,box-shadow .25s}
+.role-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.role-ico{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:1.6rem}
+.role-card h4{font-family:var(--font-d);font-size:1.12rem;font-weight:700;margin-bottom:8px}
+.role-card p{font-size:.88rem;color:var(--muted);line-height:1.55}
+
+/* pricing */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.price-card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--radius-lg);padding:32px;display:flex;flex-direction:column;position:relative;transition:transform .25s,box-shadow .25s}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.price-card.featured{border-color:var(--gold);box-shadow:0 12px 40px rgba(184,137,58,.18)}
+.price-tag-pop{position:absolute;top:-13px;right:50%;transform:translateX(50%);background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a2a08;padding:5px 16px;border-radius:999px;font-family:var(--font-d);font-weight:700;font-size:.78rem;white-space:nowrap}
+.price-name{font-family:var(--font-d);font-size:1.3rem;font-weight:700;margin-bottom:6px}
+.price-desc{color:var(--muted);font-size:.9rem;margin-bottom:22px;min-height:40px}
+.price-amount{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
+.price-amount .cur{font-family:var(--font-d);font-weight:700;font-size:1.1rem;color:var(--ink)}
+.price-amount .val{font-family:var(--font-d);font-weight:800;font-size:3rem;color:var(--text);line-height:1}
+.price-amount .per{color:var(--muted);font-size:.92rem}
+.price-billed{font-size:.82rem;color:var(--muted-2);margin-bottom:24px}
+.price-feats{display:flex;flex-direction:column;gap:13px;margin-bottom:28px;flex:1}
+.price-feat{display:flex;align-items:flex-start;gap:10px;font-size:.94rem}
+.price-feat svg{width:19px;height:19px;color:var(--ok);flex-shrink:0;margin-top:2px}
+.price-feat.off{color:var(--muted-2)}
+.price-feat.off svg{color:var(--muted-2)}
+
+/* cta band */
+.cta-band{background:linear-gradient(135deg,var(--ink),var(--ink-2));border-radius:var(--radius-lg);padding:56px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.cta-band::before{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(216,169,74,.3),transparent 70%);top:-150px;right:-100px}
+.cta-band h2{font-family:var(--font-d);font-size:clamp(1.8rem,3.5vw,2.6rem);color:#fff;font-weight:700;margin-bottom:16px;position:relative}
+.cta-band p{color:rgba(255,255,255,.8);font-size:1.1rem;max-width:520px;margin:0 auto 30px;position:relative}
+
+/* footer */
+.lp-foot{background:var(--ink);color:rgba(255,255,255,.7);padding:56px 0 30px}
+.lp-foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.lp-foot h5{font-family:var(--font-d);color:#fff;font-weight:700;margin-bottom:16px;font-size:1rem}
+.lp-foot a{display:block;padding:5px 0;font-size:.92rem;transition:color .15s}
+.lp-foot a:hover{color:var(--gold-2)}
+.lp-foot .brand-name b{color:#fff}
+.lp-foot .brand-sub{color:rgba(255,255,255,.5)}
+.lp-foot-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.86rem;color:rgba(255,255,255,.5)}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ===================== AUTH ===================== */
+.auth{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:var(--sand)}
+.auth-aside{
+  position:relative;overflow:hidden;padding:56px;
+  background:linear-gradient(150deg,var(--ink),var(--ink-2) 70%,var(--ink-soft));
+  color:#fff;display:flex;flex-direction:column;justify-content:space-between;
+}
+.auth-aside::before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(216,169,74,.25),transparent 70%);top:-160px;left:-120px}
+.auth-aside::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);background-size:28px 28px;opacity:.6}
+.auth-aside-top,.auth-aside-mid,.auth-aside-bot{position:relative;z-index:1}
+.auth-aside .brand-mark{background:rgba(255,255,255,.1);box-shadow:none}
+.auth-aside .brand-name b,.auth-aside .brand-name{color:#fff}
+.auth-aside .brand-sub{color:rgba(255,255,255,.6)}
+.auth-aside-mid h2{font-family:var(--font-d);font-size:2.3rem;line-height:1.25;font-weight:700;margin-bottom:18px;letter-spacing:-.5px}
+.auth-aside-mid p{color:rgba(255,255,255,.75);font-size:1.06rem;line-height:1.7;max-width:420px}
+.auth-points{margin-top:32px;display:flex;flex-direction:column;gap:16px}
+.auth-point{display:flex;align-items:center;gap:14px}
+.auth-point-ico{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex-shrink:0;color:var(--gold-2)}
+.auth-point-ico svg{width:21px;height:21px}
+.auth-point span{font-size:.98rem;color:rgba(255,255,255,.92);font-weight:500}
+.auth-quote{background:rgba(255,255,255,.08);border-radius:var(--radius);padding:22px;border:1px solid rgba(255,255,255,.12)}
+.auth-quote p{font-size:1rem;line-height:1.6;font-style:italic;margin-bottom:14px}
+.auth-quote .by{display:flex;align-items:center;gap:12px}
+.auth-quote .by .av{width:40px;height:40px;border-radius:50%;background:var(--gold);display:grid;place-items:center;color:var(--ink);font-weight:800;font-family:var(--font-d)}
+.auth-quote .by div{font-size:.86rem}
+.auth-quote .by b{display:block;color:#fff;font-family:var(--font-d)}
+
+.auth-main{display:flex;align-items:center;justify-content:center;padding:40px;overflow-y:auto}
+.auth-box{width:100%;max-width:420px;animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
+.auth-box .brand{display:none;margin-bottom:30px}
+.auth-h{margin-bottom:28px}
+.auth-h h1{font-family:var(--font-d);font-size:1.9rem;font-weight:700;margin-bottom:8px}
+.auth-h p{color:var(--muted)}
+.auth-tabs{display:flex;background:var(--sand-2);border-radius:12px;padding:5px;margin-bottom:26px;gap:5px}
+.auth-tab{flex:1;padding:11px;border-radius:9px;font-family:var(--font-d);font-weight:700;font-size:.94rem;color:var(--muted);transition:all .2s;text-align:center}
+.auth-tab.active{background:var(--paper);color:var(--ink);box-shadow:var(--shadow-sm)}
+.auth-divider{display:flex;align-items:center;gap:14px;margin:22px 0;color:var(--muted-2);font-size:.84rem}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.auth-foot{text-align:center;margin-top:24px;font-size:.92rem;color:var(--muted)}
+.auth-foot a{color:var(--ink);font-weight:700}
+.role-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.role-opt{padding:14px;border:1.5px solid var(--line-2);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;background:var(--sand)}
+.role-opt:hover{border-color:var(--ink-soft)}
+.role-opt.sel{border-color:var(--ink);background:var(--gold-soft)}
+.role-opt .ro-ico{font-size:1.5rem;margin-bottom:6px}
+.role-opt .ro-name{font-family:var(--font-d);font-weight:700;font-size:.92rem}
+.role-opt .ro-desc{font-size:.74rem;color:var(--muted);margin-top:2px}
+.demo-hint{background:var(--info-soft);border:1px solid color-mix(in srgb,var(--info) 22%,transparent);border-radius:12px;padding:13px 15px;margin-bottom:22px;font-size:.86rem;color:var(--info)}
+.demo-hint b{font-family:var(--font-d)}
+.demo-creds{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.demo-cred{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:.76rem;cursor:pointer;transition:all .15s;font-family:var(--font-m);direction:ltr}
+.demo-cred:hover{border-color:var(--ink);background:var(--gold-soft)}
+
+/* ===================== APP SHELL ===================== */
+.shell{display:grid;grid-template-columns:268px 1fr;min-height:100vh;background:var(--sand)}
+.sidebar{
+  background:var(--paper);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+  transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:200;
+}
+.sb-head{padding:20px;border-bottom:1px solid var(--line);flex-shrink:0}
+.sb-org{display:flex;align-items:center;gap:11px;padding:10px;border-radius:12px;transition:background .15s;cursor:default}
+.sb-org-mark{width:42px;height:42px;border-radius:11px;background:linear-gradient(140deg,var(--ink-2),var(--ink));display:grid;place-items:center;color:var(--gold-2);flex-shrink:0}
+.sb-org-mark svg{width:22px;height:22px}
+.sb-org-info{min-width:0}
+.sb-org-name{font-family:var(--font-d);font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-org-plan{font-size:.74rem;color:var(--gold);font-weight:700}
+.sb-nav{flex:1;overflow-y:auto;padding:14px 12px}
+.sb-group-label{font-size:.72rem;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:.8px;padding:14px 12px 8px;font-family:var(--font-d)}
+.sb-link{
+  display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;
+  font-weight:600;font-size:.95rem;color:var(--muted);margin-bottom:3px;
+  transition:all .16s;position:relative;cursor:pointer;
+}
+.sb-link:hover{background:var(--sand-2);color:var(--text)}
+.sb-link.active{background:var(--gold-soft);color:var(--ink)}
+.sb-link.active::before{content:"";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:4px;height:22px;background:var(--gold);border-radius:0 4px 4px 0}
+.sb-link svg{width:20px;height:20px;flex-shrink:0}
+.sb-link .sb-count{margin-right:auto;background:var(--sand-2);color:var(--muted);font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:999px;font-family:var(--font-m)}
+.sb-link.active .sb-count{background:var(--gold);color:#fff}
+.sb-foot{padding:14px;border-top:1px solid var(--line);flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:11px;padding:10px;border-radius:12px;cursor:pointer;transition:background .15s}
+.sb-user:hover{background:var(--sand-2)}
+.sb-avatar{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--gold-2),var(--gold));display:grid;place-items:center;color:#3a2a08;font-weight:800;font-family:var(--font-d);flex-shrink:0;font-size:.95rem}
+.sb-user-info{min-width:0;flex:1}
+.sb-user-name{font-family:var(--font-d);font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-role{font-size:.76rem;color:var(--muted)}
+
+.main{display:flex;flex-direction:column;min-width:0;min-height:100vh}
+.topbar{
+  position:sticky;top:0;z-index:150;
+  background:color-mix(in srgb,var(--sand) 85%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  padding:14px 28px;display:flex;align-items:center;gap:16px;
+}
+.topbar-title{flex:1;min-width:0}
+.topbar-title h1{font-family:var(--font-d);font-size:1.32rem;font-weight:700;line-height:1.2}
+.topbar-title .crumb{font-size:.82rem;color:var(--muted)}
+.search-box{position:relative;width:min(320px,38vw)}
+.search-box input{width:100%;padding:10px 40px 10px 14px;border-radius:11px;border:1.5px solid var(--line-2);background:var(--paper);font-size:.9rem}
+.search-box input:focus{border-color:var(--ink-soft);box-shadow:0 0 0 4px rgba(15,87,64,.08)}
+.search-box svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted-2)}
+.menu-toggle{display:none}
+.content{padding:28px;flex:1;animation:fadeIn .4s ease both}
+.content-narrow{max-width:1080px}
+
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px;flex-wrap:wrap}
+.page-head h2{font-family:var(--font-d);font-size:1.7rem;font-weight:700;letter-spacing:-.3px}
+.page-head p{color:var(--muted);margin-top:5px;font-size:.96rem}
+.page-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.stat-ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center}
+.stat-ico svg{width:23px;height:23px}
+.stat-ico.gold{background:var(--gold-soft);color:var(--gold)}
+.stat-ico.ink{background:rgba(15,87,64,.12);color:var(--ink)}
+.stat-ico.info{background:var(--info-soft);color:var(--info)}
+.stat-ico.ok{background:var(--ok-soft);color:var(--ok)}
+.stat-ico.warn{background:var(--warn-soft);color:var(--warn)}
+.stat-ico.danger{background:var(--danger-soft);color:var(--danger)}
+.stat-val{font-family:var(--font-d);font-size:2.1rem;font-weight:800;line-height:1;margin-bottom:6px}
+.stat-label{color:var(--muted);font-size:.92rem;font-weight:500}
+.stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:.78rem;font-weight:700;margin-top:10px;padding:3px 8px;border-radius:999px}
+.stat-trend.up{background:var(--ok-soft);color:var(--ok)}
+.stat-trend.down{background:var(--danger-soft);color:var(--danger)}
+.stat-trend svg{width:13px;height:13px}
+
+/* generic grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-12{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.panel-head h3{font-family:var(--font-d);font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:9px}
+.panel-head h3 svg{width:19px;height:19px;color:var(--gold)}
+.panel-body{padding:20px}
+.panel-body.flush{padding:0}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
+.tbl thead th{text-align:right;padding:13px 18px;font-family:var(--font-d);font-weight:700;color:var(--muted);font-size:.82rem;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--sand)}
+.tbl tbody td{padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr{transition:background .14s}
+.tbl tbody tr:hover{background:var(--sand)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl .cell-main{font-weight:700;font-family:var(--font-d)}
+.tbl .cell-sub{font-size:.82rem;color:var(--muted)}
+.td-actions{display:flex;gap:6px;justify-content:flex-start}
+
+.usercell{display:flex;align-items:center;gap:11px}
+.usercell .av{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-family:var(--font-d);color:#fff;flex-shrink:0;font-size:.85rem}
+.usercell .info{min-width:0}
+.usercell .nm{font-weight:700;font-family:var(--font-d);white-space:nowrap}
+.usercell .meta{font-size:.8rem;color:var(--muted)}
+
+/* list items */
+.list-item{display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid var(--line);transition:background .14s}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:var(--sand)}
+.li-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.li-ico svg{width:21px;height:21px}
+.li-body{flex:1;min-width:0}
+.li-title{font-family:var(--font-d);font-weight:700;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-meta{font-size:.84rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.li-meta .dot-sep{width:3px;height:3px;border-radius:50%;background:var(--muted-2)}
+.li-side{text-align:left;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+/* timeline */
+.timeline{position:relative;padding-right:8px}
+.tl-item{position:relative;padding:0 28px 24px 0;border-right:2px solid var(--line)}
+.tl-item:last-child{border-right-color:transparent;padding-bottom:0}
+.tl-dot{position:absolute;right:-8px;top:2px;width:15px;height:15px;border-radius:50%;border:3px solid var(--paper);background:var(--gold);box-shadow:0 0 0 1px var(--line)}
+.tl-dot.ink{background:var(--ink)}.tl-dot.ok{background:var(--ok)}.tl-dot.info{background:var(--info)}.tl-dot.danger{background:var(--danger)}
+.tl-time{font-size:.78rem;color:var(--muted-2);font-weight:700;font-family:var(--font-m);margin-bottom:4px;direction:ltr;text-align:right}
+.tl-title{font-family:var(--font-d);font-weight:700;font-size:.96rem;margin-bottom:3px}
+.tl-desc{font-size:.88rem;color:var(--muted);line-height:1.5}
+
+/* empty state */
+.empty{text-align:center;padding:56px 24px;color:var(--muted)}
+.empty-ico{width:84px;height:84px;border-radius:24px;background:var(--sand-2);display:grid;place-items:center;margin:0 auto 20px;color:var(--muted-2)}
+.empty-ico svg{width:38px;height:38px}
+.empty h4{font-family:var(--font-d);font-size:1.18rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.empty p{font-size:.95rem;max-width:380px;margin:0 auto 22px;line-height:1.6}
+
+/* kanban / case stages */
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kb-col{background:var(--sand-2);border-radius:var(--radius);padding:14px;min-height:200px}
+.kb-col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:0 4px}
+.kb-col-head .t{font-family:var(--font-d);font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:8px}
+.kb-col-head .c{background:var(--paper);font-size:.76rem;font-weight:700;padding:2px 9px;border-radius:999px;font-family:var(--font-m)}
+.kb-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.kb-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--gold)}
+.kb-card-num{font-family:var(--font-m);font-size:.74rem;color:var(--gold);font-weight:600;direction:ltr;margin-bottom:6px}
+.kb-card-title{font-family:var(--font-d);font-weight:700;font-size:.92rem;margin-bottom:8px;line-height:1.4}
+.kb-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+
+/* detail rows */
+.detail-rows{display:flex;flex-direction:column}
+.detail-row{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+.detail-row:last-child{border-bottom:none}
+.detail-row .dr-label{width:150px;flex-shrink:0;color:var(--muted);font-weight:600;font-size:.9rem}
+.detail-row .dr-val{flex:1;font-weight:600;font-family:var(--font-d)}
+
+/* segmented */
+.segmented{display:inline-flex;background:var(--sand-2);border-radius:11px;padding:4px;gap:3px}
+.seg{padding:8px 16px;border-radius:8px;font-family:var(--font-d);font-weight:700;font-size:.88rem;color:var(--muted);transition:all .18s}
+.seg.active{background:var(--paper);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* toggle switch */
+.switch{position:relative;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch .track{position:absolute;inset:0;background:var(--line-2);border-radius:999px;transition:background .2s;cursor:pointer}
+.switch .track::before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;right:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked + .track{background:var(--ink)}
+.switch input:checked + .track::before{transform:translateX(-20px)}
+
+/* permission grid */
+.perm-list{display:flex;flex-direction:column;gap:2px}
+.perm-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;transition:background .14s}
+.perm-row:hover{background:var(--sand)}
+.perm-info{flex:1}
+.perm-name{font-family:var(--font-d);font-weight:700;font-size:.95rem}
+.perm-desc{font-size:.82rem;color:var(--muted);margin-top:2px}
+
+/* color swatches (CMS) */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.swatch{border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.swatch:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.swatch.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+.swatch-colors{height:60px;display:flex}
+.swatch-colors span{flex:1}
+.swatch-name{padding:9px 12px;font-family:var(--font-d);font-weight:700;font-size:.86rem;display:flex;align-items:center;justify-content:space-between}
+
+/* invoice */
+.inv-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;border-bottom:2px solid var(--ink);margin-bottom:24px}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.inv-table th{text-align:right;padding:11px;background:var(--sand-2);font-family:var(--font-d);font-size:.84rem;color:var(--muted)}
+.inv-table td{padding:12px 11px;border-bottom:1px solid var(--line)}
+.inv-total-row{display:flex;justify-content:space-between;padding:8px 0;font-size:.95rem}
+.inv-total-row.grand{font-family:var(--font-d);font-size:1.3rem;font-weight:800;color:var(--ink);border-top:2px solid var(--ink);margin-top:8px;padding-top:14px}
+
+/* progress */
+.progress{height:8px;background:var(--sand-2);border-radius:999px;overflow:hidden}
+.progress-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold-2),var(--gold));transition:width .6s cubic-bezier(.16,1,.3,1)}
+.progress-bar.ink{background:linear-gradient(90deg,var(--ink-soft),var(--ink))}
+
+/* avatar colors helper applied via inline style */
+.dropdown-menu{position:absolute;background:var(--paper);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow-lg);padding:7px;min-width:200px;z-index:500;animation:scaleIn .18s ease both}
+.dd-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-weight:600;font-size:.92rem;cursor:pointer;transition:background .14s;width:100%;text-align:right}
+.dd-item:hover{background:var(--sand-2)}
+.dd-item svg{width:18px;height:18px;color:var(--muted)}
+.dd-item.danger{color:var(--danger)}
+.dd-item.danger svg{color:var(--danger)}
+.dd-sep{height:1px;background:var(--line);margin:6px 0}
+
+.chip-row{display:flex;gap:8px;flex-wrap:wrap}
+.notif-dot{position:absolute;top:8px;left:9px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--paper)}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero-visual{height:380px;max-width:520px}
+  .feat-grid,.price-grid{grid-template-columns:1fr 1fr}
+  .roles-grid{grid-template-columns:1fr 1fr}
+  .lp-foot-grid{grid-template-columns:1fr 1fr}
+  .grid-12{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:880px){
+  .auth{grid-template-columns:1fr}
+  .auth-aside{display:none}
+  .auth-box .brand{display:flex}
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;right:0;top:0;width:280px;transform:translateX(100%);box-shadow:var(--shadow-lg)}
+  .sidebar.open{transform:translateX(0)}
+  .menu-toggle{display:grid}
+  .sb-backdrop{position:fixed;inset:0;background:rgba(11,30,22,.5);z-index:199;animation:fadeIn .25s ease both}
+  .search-box{display:none}
+}
+@media (max-width:720px){
+  .wrap{padding:0 18px}
+  .feat-grid,.price-grid,.roles-grid,.grid-2,.grid-3{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .kanban{grid-template-columns:1fr}
+  .lp-nav-links{display:none}
+  .section{padding:56px 0}
+  .cta-band{padding:36px 22px}
+  .content{padding:18px}
+  .topbar{padding:12px 18px}
+  .hero{padding:40px 0 60px}
+  .lp-foot-grid{grid-template-columns:1fr}
+  .modal-foot{flex-direction:column-reverse}
+  .modal-foot .btn{width:100%}
+  .detail-row{flex-direction:column;gap:4px}
+  .detail-row .dr-label{width:auto}
+  .page-head{flex-direction:column}
+  .role-pick{grid-template-columns:1fr}
+}
+@media (max-width:440px){
+  .stats-grid{grid-template-columns:1fr}
+  .auth-main{padding:24px 18px}
+  .hero-trust{gap:18px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="toast-root" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;width:min(420px,92vw)"></div>
+<script>
+"use strict";
+/* ============================================================
+   LEXPRO — Legal Office Management System (single-file app)
+   Pure vanilla JS. Data persists in localStorage.
+   ============================================================ */
+
+/* ---------- ICONS (inline SVG, stroke-based) ---------- */
+const IC = {
+  scale:'<path d="M12 3v18M5 21h14M12 6l-7 2 3.5 7a3.5 3.5 0 01-7 0L5 8m14-2l-7 2m7-2l3 7a3.5 3.5 0 01-7 0L19 6"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>',
+  dashboard:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  folder:'<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>',
+  users:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5"/><path d="M16 5.5a3 3 0 010 5.5M21 20c0-2.5-1.5-4.2-3.5-4.7"/>',
+  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/>',
+  doc:'<path d="M6 2h7l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M13 2v5h5M8 13h8M8 17h5"/>',
+  money:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>',
+  bell:'<path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.7 21a2 2 0 01-3.4 0"/>',
+  chart:'<path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 005 5L15 12l5 2v4a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/>',
+  edit:'<path d="M4 20h4L18.5 9.5a2.1 2.1 0 00-3-3L5 17v3z"/><path d="M13.5 6.5l3 3"/>',
+  trash:'<path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"/>',
+  check:'<path d="M5 12l4 4L19 6"/>',
+  checkCircle:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  xCircle:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff:'<path d="M3 3l18 18M10.5 10.7a2 2 0 002.8 2.8M6.5 6.6C4 8.2 2 12 2 12s4 7 10 7c2 0 3.7-.5 5.2-1.3M9.8 5.2A9.7 9.7 0 0112 5c6 0 10 7 10 7s-1 1.7-2.7 3.3"/>',
+  arrowUp:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  arrowDown:'<path d="M12 5v14M5 12l7 7 7-7"/>',
+  arrowLeft:'<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  arrowRight:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+  chevL:'<path d="M15 18l-6-6 6-6"/>',
+  chevR:'<path d="M9 18l6-6-6-6"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  warn:'<path d="M12 3l9 16H3l9-16z"/><path d="M12 10v4M12 17h.01"/>',
+  logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',
+  menu:'<path d="M3 6h18M3 12h18M3 18h18"/>',
+  building:'<rect x="4" y="2" width="16" height="20" rx="1.5"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/>',
+  star:'<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8-4.3-4.1 5.9-.9L12 3z"/>',
+  send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>',
+  msg:'<path d="M21 12a8 8 0 01-11.5 7.2L3 21l1.8-6.5A8 8 0 1121 12z"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/>',
+  gavel:'<path d="M14 3l7 7-3 3-7-7 3-3zM10.5 6.5L3 14l3 3 7.5-7.5M14 21H6"/>',
+  filter:'<path d="M3 5h18l-7 8v6l-4-2v-4L3 5z"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+  print:'<path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v7H6z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4"/>',
+  moon:'<path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/>',
+  key:'<circle cx="8" cy="15" r="5"/><path d="M11.5 11.5L21 2M17 6l3 3M15 8l2 2"/>',
+  palette:'<path d="M12 3a9 9 0 000 18c1 0 1.5-.8 1.5-1.5 0-.4-.2-.7-.4-1-.2-.3-.4-.6-.4-1 0-.8.7-1.5 1.5-1.5H16a5 5 0 005-5c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11.5" r="1"/><circle cx="11.5" cy="7.5" r="1"/><circle cx="16.5" cy="11.5" r="1"/>',
+  code:'<path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/>',
+  link:'<path d="M9 15l6-6M10 6l1-1a4 4 0 016 6l-1 1M14 18l-1 1a4 4 0 01-6-6l1-1"/>',
+  refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>',
+  upload:'<path d="M12 15V3M7 8l5-5 5 5M5 21h14"/>',
+  flag:'<path d="M4 21V4a1 1 0 011-1c3 0 5 2 8 2s3-1 6-1v9c-3 0-3 1-6 1s-5-2-8-2"/>',
+  award:'<circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/>',
+  zap:'<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>',
+  trending:'<path d="M22 7l-8.5 8.5-4-4L2 19M16 7h6v6"/>',
+  layers:'<path d="M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>',
+  hash:'<path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/>',
+};
+function icon(name,cls){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" ${cls?`class="${cls}"`:''}>${IC[name]||''}</svg>`;}
+
+/* ---------- HELPERS ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const uid = (p='id')=>p+'_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const esc = s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = o=>JSON.parse(JSON.stringify(o));
+
+const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const AR_DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+function fmtDate(d){if(!d)return'—';const x=new Date(d);return `${x.getDate()} ${AR_MONTHS[x.getMonth()]} ${x.getFullYear()}`;}
+function fmtDateTime(d){if(!d)return'—';const x=new Date(d);let h=x.getHours();const m=String(x.getMinutes()).padStart(2,'0');const ap=h>=12?'م':'ص';h=h%12||12;return `${fmtDate(d)} • ${h}:${m} ${ap}`;}
+function fmtDay(d){const x=new Date(d);return `${AR_DAYS[x.getDay()]} ${x.getDate()}/${x.getMonth()+1}`;}
+function fmtMoney(n){return (Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:n%1?3:0,maximumFractionDigits:3});}
+function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'الآن';if(s<3600)return`قبل ${Math.floor(s/60)} د`;if(s<86400)return`قبل ${Math.floor(s/3600)} س`;if(s<604800)return`قبل ${Math.floor(s/86400)} يوم`;return fmtDate(d);}
+function daysUntil(d){return Math.ceil((new Date(d)-new Date().setHours(0,0,0,0))/86400000);}
+function initials(name){const p=String(name||'').trim().split(/\s+/);return ((p[0]?.[0]||'')+(p[1]?.[0]||'')).toUpperCase()||'؟';}
+const AV_COLORS=[['#0f5740','#0b3d2e'],['#b8893a','#8f6420'],['#2a5d80','#1c4159'],['#7a4a8c','#553363'],['#a6362f','#7d2722'],['#2f7d54','#1f5538'],['#9c6b1d','#6e4a13'],['#3a6e8f','#264b61']];
+function avColor(seed){let h=0;for(const c of String(seed||'x'))h=c.charCodeAt(0)+((h<<5)-h);return AV_COLORS[Math.abs(h)%AV_COLORS.length];}
+
+/* ============================================================
+   DATA LAYER  — acts as the "database". Persists to localStorage.
+   In production this maps 1:1 to API endpoints / SQL tables.
+   ============================================================ */
+const DB_KEY='lexpro_db_v1';
+const SESSION_KEY='lexpro_session_v1';
+
+const ROLES={
+  owner:{label:'صاحب المكتب',icon:'building',color:'#b8893a',desc:'تحكم كامل بالنظام والصلاحيات'},
+  lawyer:{label:'محامٍ',icon:'gavel',color:'#0f5740',desc:'إدارة القضايا والجلسات والموكّلين'},
+  client:{label:'موكّل',icon:'user',color:'#2a5d80',desc:'متابعة القضية والجلسات والرسائل'},
+  admin:{label:'إداري',icon:'briefcase',color:'#7a4a8c',desc:'إدارة المكتب والوثائق والفواتير'},
+  developer:{label:'مطوّر',icon:'code',color:'#3a6e8f',desc:'إعدادات النظام ولوحة إدارة الموقع'},
+};
+const PERMISSIONS=[
+  {key:'cases.view',name:'عرض القضايا',group:'القضايا'},
+  {key:'cases.manage',name:'إضافة وتعديل القضايا',group:'القضايا'},
+  {key:'cases.delete',name:'حذف القضايا',group:'القضايا'},
+  {key:'sessions.manage',name:'إدارة الجلسات والتذكيرات',group:'الجلسات'},
+  {key:'clients.manage',name:'إدارة الموكّلين',group:'الموكّلون'},
+  {key:'documents.manage',name:'رفع وإدارة الوثائق',group:'الوثائق'},
+  {key:'billing.view',name:'عرض الأتعاب والفواتير',group:'المالية'},
+  {key:'billing.manage',name:'إصدار الفواتير وتسجيل الدفعات',group:'المالية'},
+  {key:'reports.view',name:'الاطلاع على التقارير',group:'التقارير'},
+  {key:'users.manage',name:'إدارة المستخدمين والصلاحيات',group:'الإدارة'},
+  {key:'cms.manage',name:'لوحة إدارة الموقع (CMS)',group:'الإدارة'},
+];
+const ROLE_DEFAULT_PERMS={
+  owner:PERMISSIONS.map(p=>p.key),
+  developer:['cms.manage','reports.view','users.manage','cases.view'],
+  admin:['cases.view','cases.manage','sessions.manage','clients.manage','documents.manage','billing.view','billing.manage','reports.view'],
+  lawyer:['cases.view','cases.manage','sessions.manage','clients.manage','documents.manage','billing.view'],
+  client:[],
+};
+const CASE_STAGES={
+  intake:{label:'استشارة / استلام',color:'#2a5d80',icon:'info'},
+  active:{label:'قيد النظر',color:'#b8893a',icon:'gavel'},
+  pending:{label:'بانتظار الحكم',color:'#7a4a8c',icon:'clock'},
+  closed:{label:'منتهية',color:'#2f7d54',icon:'checkCircle'},
+};
+const CASE_TYPES=['مدني','تجاري','جزائي','أحوال شخصية','عمّالي','عقاري','إداري','تحكيم'];
+const COURTS=['المحكمة الابتدائية بمسقط','محكمة الاستئناف','المحكمة العليا','محكمة مطرح','المحكمة التجارية','محكمة العمل'];
+
+let DB=null;
+
+function nowISO(){return new Date().toISOString();}
+function dPlus(days,h=9,m=0){const d=new Date();d.setDate(d.getDate()+days);d.setHours(h,m,0,0);return d.toISOString();}
+function dMinus(days){const d=new Date();d.setDate(d.getDate()-days);return d.toISOString();}
+
+function seedDB(){
+  const oid='org_main';
+  const owner={id:'u_owner',org:oid,name:'الفاضل سالم بن خميس الحارثي',email:'owner@lexpro.om',phone:'+96891000001',pass:'1234',role:'owner',perms:clone(ROLE_DEFAULT_PERMS.owner),active:true,created:dMinus(420),title:'المحامي المؤسس'};
+  const law1={id:'u_law1',org:oid,name:'المحامية أمل بنت ناصر البلوشي',email:'amal@lexpro.om',phone:'+96891000002',pass:'1234',role:'lawyer',perms:clone(ROLE_DEFAULT_PERMS.lawyer),active:true,created:dMinus(300),title:'محامية أولى — قضايا تجارية'};
+  const law2={id:'u_law2',org:oid,name:'المحامي يوسف بن علي الكندي',email:'yousef@lexpro.om',phone:'+96891000003',pass:'1234',role:'lawyer',perms:clone(ROLE_DEFAULT_PERMS.lawyer),active:true,created:dMinus(210),title:'محامٍ — أحوال شخصية وعمّالي'};
+  const admin={id:'u_admin',org:oid,name:'مريم بنت سعيد الرئيسي',email:'admin@lexpro.om',phone:'+96891000004',pass:'1234',role:'admin',perms:clone(ROLE_DEFAULT_PERMS.admin),active:true,created:dMinus(180),title:'مديرة المكتب'};
+  const dev={id:'u_dev',org:oid,name:'حمد بن راشد (مطوّر النظام)',email:'dev@lexpro.om',phone:'+96891000005',pass:'1234',role:'developer',perms:clone(ROLE_DEFAULT_PERMS.developer),active:true,created:dMinus(150),title:'مسؤول تقني'};
+  const cl1={id:'u_cl1',org:oid,name:'عبدالله بن محمد الزدجالي',email:'client@lexpro.om',phone:'+96899100001',pass:'1234',role:'client',perms:[],active:true,created:dMinus(120),title:'موكّل'};
+  const cl2={id:'u_cl2',org:oid,name:'شركة الواحة للتجارة ش.م.م',email:'wahat@lexpro.om',phone:'+96899100002',pass:'1234',role:'client',perms:[],active:true,created:dMinus(90),title:'موكّل — اعتباري'};
+  const cl3={id:'u_cl3',org:oid,name:'فاطمة بنت خلفان الهنائي',email:'fatma@lexpro.om',phone:'+96899100003',pass:'1234',role:'client',perms:[],active:true,created:dMinus(60),title:'موكّل'};
+  const users=[owner,law1,law2,admin,dev,cl1,cl2,cl3];
+
+  const cases=[
+    {id:'c_1',org:oid,number:'2025/مدني/1842',title:'نزاع عقد مقاولات — مشروع فلل الموج',type:'تجاري',stage:'active',client:cl2.id,lawyer:law1.id,court:'المحكمة التجارية',opponent:'مؤسسة البناء الحديث',value:85000,opened:dMinus(85),desc:'مطالبة بقيمة أعمال منفّذة ولم تُسدّد، مع تعويض عن التأخير في التسليم.',priority:'high',created:dMinus(85)},
+    {id:'c_2',org:oid,number:'2025/عمّالي/932',title:'دعوى فصل تعسّفي',type:'عمّالي',stage:'pending',client:cl1.id,lawyer:law2.id,court:'محكمة العمل',opponent:'الشركة الوطنية للخدمات',value:12000,opened:dMinus(70),desc:'مطالبة بمستحقات نهاية الخدمة والتعويض عن الفصل دون مبرّر مشروع.',priority:'medium',created:dMinus(70)},
+    {id:'c_3',org:oid,number:'2025/أحوال/455',title:'قضية حضانة ونفقة',type:'أحوال شخصية',stage:'active',client:cl3.id,lawyer:law2.id,court:'المحكمة الابتدائية بمسقط',opponent:'—',value:0,opened:dMinus(45),desc:'طلب حضانة الأبناء وتحديد نفقة شهرية.',priority:'high',created:dMinus(45)},
+    {id:'c_4',org:oid,number:'2025/عقاري/771',title:'إثبات ملكية أرض بولاية بوشر',type:'عقاري',stage:'intake',client:cl2.id,lawyer:law1.id,court:'المحكمة الابتدائية بمسقط',opponent:'ورثة المرحوم ع. السالمي',value:45000,opened:dMinus(20),desc:'دعوى لإثبات صحة ونفاذ عقد بيع أرض.',priority:'medium',created:dMinus(20)},
+    {id:'c_5',org:oid,number:'2024/تجاري/2201',title:'تحصيل شيكات مرتجعة',type:'تجاري',stage:'closed',client:cl2.id,lawyer:law1.id,court:'المحكمة التجارية',opponent:'مؤسسة الأفق',value:28000,opened:dMinus(200),desc:'تم الحكم لصالح الموكّل وتحصيل كامل المبلغ.',priority:'low',created:dMinus(200)},
+  ];
+
+  const sessions=[
+    {id:'s_1',org:oid,case:'c_1',title:'جلسة مرافعة',court:'المحكمة التجارية',date:dPlus(2,10,0),hall:'القاعة 3',note:'تقديم المذكرة الختامية والمستندات الداعمة.',remind:{sms:true,email:true,sent:false,before:1},status:'upcoming'},
+    {id:'s_2',org:oid,case:'c_2',title:'جلسة نطق بالحكم',court:'محكمة العمل',date:dPlus(5,9,30),hall:'القاعة 1',note:'حضور الموكّل مطلوب.',remind:{sms:true,email:true,sent:false,before:2},status:'upcoming'},
+    {id:'s_3',org:oid,case:'c_3',title:'جلسة تحقيق',court:'المحكمة الابتدائية بمسقط',date:dPlus(9,11,0),hall:'القاعة 5',note:'سماع أقوال الشهود.',remind:{sms:true,email:false,sent:false,before:1},status:'upcoming'},
+    {id:'s_4',org:oid,case:'c_1',title:'جلسة أولى',court:'المحكمة التجارية',date:dMinus(30),hall:'القاعة 3',note:'تم تأجيلها لتقديم المستندات.',remind:{sms:true,email:true,sent:true,before:1},status:'done'},
+    {id:'s_5',org:oid,case:'c_4',title:'جلسة قيد الدعوى',court:'المحكمة الابتدائية بمسقط',date:dPlus(14,10,0),hall:'القاعة 2',note:'',remind:{sms:false,email:true,sent:false,before:1},status:'upcoming'},
+  ];
+
+  const documents=[
+    {id:'d_1',org:oid,case:'c_1',name:'عقد المقاولات الأصلي.pdf',type:'عقد',size:'2.4 MB',by:law1.id,date:dMinus(80)},
+    {id:'d_2',org:oid,case:'c_1',name:'كشف الأعمال المنفّذة.xlsx',type:'مستند',size:'540 KB',by:admin.id,date:dMinus(60)},
+    {id:'d_3',org:oid,case:'c_2',name:'عقد العمل وملحقاته.pdf',type:'عقد',size:'1.1 MB',by:law2.id,date:dMinus(65)},
+    {id:'d_4',org:oid,case:'c_3',name:'صحيفة الدعوى.pdf',type:'صحيفة',size:'320 KB',by:law2.id,date:dMinus(44)},
+    {id:'d_5',org:oid,case:'c_1',name:'المذكرة الختامية.docx',type:'مذكرة',size:'180 KB',by:law1.id,date:dMinus(5)},
+  ];
+
+  const invoices=[
+    {id:'inv_1',org:oid,number:'INV-2025-031',case:'c_1',client:cl2.id,items:[{desc:'أتعاب المرافعة والمتابعة',qty:1,price:6000},{desc:'رسوم وإجراءات قضائية',qty:1,price:850}],issued:dMinus(40),due:dPlus(5),status:'partial',paid:3000},
+    {id:'inv_2',org:oid,number:'INV-2025-038',case:'c_2',client:cl1.id,items:[{desc:'أتعاب دعوى عمّالية',qty:1,price:2500}],issued:dMinus(20),due:dPlus(10),status:'unpaid',paid:0},
+    {id:'inv_3',org:oid,number:'INV-2024-198',case:'c_5',client:cl2.id,items:[{desc:'أتعاب تحصيل شيكات',qty:1,price:3500}],issued:dMinus(150),due:dMinus(120),status:'paid',paid:3500},
+    {id:'inv_4',org:oid,number:'INV-2025-041',case:'c_3',client:cl3.id,items:[{desc:'أتعاب قضية أحوال شخصية',qty:1,price:1800}],issued:dMinus(10),due:dPlus(20),status:'unpaid',paid:0},
+  ];
+
+  const messages=[
+    {id:'m_1',org:oid,case:'c_1',from:law1.id,to:cl2.id,body:'تم رفع المذكرة الختامية، والجلسة القادمة بعد يومين. نرجو حضوركم.',date:dMinus(4),read:true},
+    {id:'m_2',org:oid,case:'c_1',from:cl2.id,to:law1.id,body:'شكراً جزيلاً، سنحضر في الموعد المحدد.',date:dMinus(3),read:true},
+    {id:'m_3',org:oid,case:'c_2',from:law2.id,to:cl1.id,body:'جلسة النطق بالحكم بعد ٥ أيام، الحضور مهم.',date:dMinus(2),read:false},
+  ];
+
+  const notifications=[
+    {id:'n_1',org:oid,user:law1.id,type:'session',title:'جلسة قادمة خلال يومين',body:'قضية 2025/مدني/1842 — المحكمة التجارية',date:dMinus(1),read:false,icon:'calendar'},
+    {id:'n_2',org:oid,user:law1.id,type:'invoice',title:'دفعة مستلمة',body:'الواحة للتجارة سدّدت 3,000 ر.ع على فاتورة INV-2025-031',date:dMinus(2),read:false,icon:'money'},
+    {id:'n_3',org:oid,user:cl2.id,type:'session',title:'تذكير بجلسة قادمة',body:'لديك جلسة مرافعة بعد يومين',date:dMinus(1),read:false,icon:'bell'},
+  ];
+
+  const activity=[
+    {id:'a_1',org:oid,user:law1.id,text:'أضافت قضية جديدة',target:'2025/عقاري/771',date:dMinus(20),type:'case'},
+    {id:'a_2',org:oid,user:admin.id,text:'أصدرت فاتورة',target:'INV-2025-038',date:dMinus(20),type:'invoice'},
+    {id:'a_3',org:oid,user:law2.id,text:'حدّدت جلسة',target:'2025/أحوال/455',date:dMinus(9),type:'session'},
+    {id:'a_4',org:oid,user:law1.id,text:'رفعت وثيقة',target:'المذكرة الختامية',date:dMinus(5),type:'doc'},
+    {id:'a_5',org:oid,user:owner.id,text:'منح صلاحيات لـ',target:'مريم الرئيسي',date:dMinus(3),type:'user'},
+  ];
+
+  const org={
+    id:oid,name:'مكتب الحارثي للمحاماة والاستشارات القانونية',plan:'professional',
+    planStarted:dMinus(420),planRenews:dPlus(310),
+    email:'info@alharthi-law.om',phone:'+968 24 000 000',address:'مسقط، الخوير، عُمان',
+    settings:{
+      siteName:'مكتب الحارثي للمحاماة',tagline:'خبرة قانونية تُعتمد عليها في سلطنة عُمان',
+      theme:'emerald',allowClientSignup:true,
+      remindDefault:1,smsEnabled:true,emailEnabled:true,
+      heroTitle:'إدارة مكتبك القانوني بثقة واحتراف',
+      heroSub:'منصة واحدة تجمع القضايا والجلسات والموكّلين والأتعاب — مصمّمة لمكاتب المحاماة في عُمان.',
+    },
+    plans:[
+      {id:'starter',name:'الأساسية',monthly:29,yearly:290,users:3,cases:50,featured:false,desc:'لمكاتب المحاماة الناشئة'},
+      {id:'professional',name:'الاحترافية',monthly:79,yearly:790,users:10,cases:500,featured:true,desc:'الأكثر اختياراً للمكاتب المتوسطة'},
+      {id:'enterprise',name:'المؤسسية',monthly:199,yearly:1990,users:-1,cases:-1,featured:false,desc:'للمكاتب الكبرى والشركات'},
+    ],
+  };
+
+  return {org,users,cases,sessions,documents,invoices,messages,notifications,activity,
+    reminderLog:[],
+    meta:{version:1,created:nowISO()}};
+}
+
+/* ---------- persistence ---------- */
+function loadDB(){
+  try{const raw=localStorage.getItem(DB_KEY);if(raw){DB=JSON.parse(raw);return;}}catch(e){console.warn('load failed',e);}
+  DB=seedDB();saveDB();
+}
+function saveDB(){try{localStorage.setItem(DB_KEY,JSON.stringify(DB));}catch(e){console.warn('save failed',e);}}
+function resetDB(){DB=seedDB();saveDB();}
+
+/* ---------- session ---------- */
+let SESSION=null;
+function loadSession(){try{const r=localStorage.getItem(SESSION_KEY);SESSION=r?JSON.parse(r):null;}catch(e){SESSION=null;}}
+function setSession(userId){SESSION={userId,at:nowISO()};localStorage.setItem(SESSION_KEY,JSON.stringify(SESSION));}
+function clearSession(){SESSION=null;localStorage.removeItem(SESSION_KEY);}
+function currentUser(){return SESSION?DB.users.find(u=>u.id===SESSION.userId):null;}
+
+/* ---------- query helpers ---------- */
+const Q={
+  user:id=>DB.users.find(u=>u.id===id),
+  userName:id=>{const u=DB.users.find(u=>u.id===id);return u?u.name:'—';},
+  case:id=>DB.cases.find(c=>c.id===id),
+  caseNum:id=>{const c=DB.cases.find(c=>c.id===id);return c?c.number:'—';},
+  clients:()=>DB.users.filter(u=>u.role==='client'),
+  staff:()=>DB.users.filter(u=>u.role!=='client'),
+  lawyers:()=>DB.users.filter(u=>u.role==='lawyer'||u.role==='owner'),
+  casesFor:uid=>DB.cases.filter(c=>c.client===uid||c.lawyer===uid),
+  sessionsFor:caseId=>DB.sessions.filter(s=>s.case===caseId),
+  upcomingSessions:()=>DB.sessions.filter(s=>s.status==='upcoming').sort((a,b)=>new Date(a.date)-new Date(b.date)),
+  docsFor:caseId=>DB.documents.filter(d=>d.case===caseId),
+  invoicesFor:f=>DB.invoices.filter(f),
+  hasPerm:(user,key)=>user&&(user.perms||[]).includes(key),
+};
+function invoiceTotal(inv){return inv.items.reduce((s,i)=>s+i.qty*i.price,0);}
+function invoiceBalance(inv){return invoiceTotal(inv)-(inv.paid||0);}
+
+/* ============================================================
+   UI INFRASTRUCTURE — toast, modal, confirm, router
+   ============================================================ */
+function toast(msg,type='ok',title){
+  const root=$('#toast-root');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  const ic={ok:'checkCircle',err:'xCircle',info:'info',warn:'warn'}[type]||'info';
+  const tt=title||{ok:'تم بنجاح',err:'حدث خطأ',info:'معلومة',warn:'تنبيه'}[type];
+  t.innerHTML=`<div class="toast-ico">${icon(ic)}</div><div class="toast-body"><div class="toast-title">${esc(tt)}</div><div class="toast-msg">${esc(msg)}</div></div>`;
+  root.appendChild(t);
+  setTimeout(()=>{t.classList.add('leaving');setTimeout(()=>t.remove(),300);},3600);
+}
+
+let modalOpen=false;
+function modal({title,icon:ic,body,foot,size='',onMount}){
+  closeModal();
+  modalOpen=true;
+  const root=$('#modal-root');
+  const ov=document.createElement('div');
+  ov.className='modal-overlay';
+  ov.innerHTML=`<div class="modal ${size}" role="dialog" aria-modal="true">
+    <div class="modal-head"><h3>${ic?`<span class="mh-ico">${icon(ic)}</span>`:''}${esc(title)}</h3>
+      <button class="modal-x" data-close aria-label="إغلاق">${icon('x')}</button></div>
+    <div class="modal-body">${body}</div>
+    ${foot?`<div class="modal-foot">${foot}</div>`:''}
+  </div>`;
+  root.appendChild(ov);
+  ov.addEventListener('mousedown',e=>{if(e.target===ov)closeModal();});
+  ov.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeModal));
+  document.addEventListener('keydown',escClose);
+  if(onMount)onMount(ov.querySelector('.modal'));
+  const f=ov.querySelector('input,select,textarea,button:not(.modal-x)');
+  if(f&&size!=='sm')setTimeout(()=>f.focus(),50);
+  return ov.querySelector('.modal');
+}
+function escClose(e){if(e.key==='Escape')closeModal();}
+function closeModal(){const root=$('#modal-root');if(root)root.innerHTML='';modalOpen=false;document.removeEventListener('keydown',escClose);}
+
+function confirmDialog({title,message,confirmText='تأكيد',danger=false,onConfirm}){
+  modal({title,icon:danger?'warn':'info',size:'sm',
+    body:`<p style="color:var(--muted);line-height:1.7;font-size:.98rem">${esc(message)}</p>`,
+    foot:`<button class="btn ${danger?'btn-danger':'btn-primary'}" data-ok>${esc(confirmText)}</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>{m.querySelector('[data-ok]').addEventListener('click',()=>{closeModal();onConfirm&&onConfirm();});}
+  });
+}
+
+/* ---------- ROUTER ---------- */
+const ROUTES={};
+function route(name,fn){ROUTES[name]=fn;}
+let CURRENT={view:'landing',params:{}};
+function navigate(view,params={}){
+  CURRENT={view,params};
+  if(SESSION)location.hash=view+(params.id?'/'+params.id:'');
+  window.scrollTo(0,0);
+  render();
+}
+function render(){
+  const app=$('#app');
+  // auth gating
+  const publicViews=['landing','auth'];
+  if(!SESSION && !publicViews.includes(CURRENT.view)){CURRENT={view:'landing',params:{}};}
+  if(SESSION && publicViews.includes(CURRENT.view)){CURRENT={view:'dashboard',params:{}};}
+  const fn=ROUTES[CURRENT.view]||ROUTES.landing;
+  app.innerHTML=fn(CURRENT.params)||'';
+  if(typeof fn.after==='function')fn.after(CURRENT.params);
+  // mark active nav
+  $$('.sb-link').forEach(l=>l.classList.toggle('active',l.dataset.view===CURRENT.view));
+}
+
+/* ============================================================
+   VIEW: LANDING PAGE
+   ============================================================ */
+route('landing',()=>{
+  const s=DB.org.settings;
+  const feats=[
+    {ic:'folder',t:'إدارة القضايا',d:'سجّل كل قضية برقمها والمحكمة والخصم والمحامي المسؤول، وتابع مراحلها من الاستلام حتى الحكم في لوحة واحدة.'},
+    {ic:'calendar',t:'الجلسات والتذكيرات',d:'جدول الجلسات القضائية، ويُذكّر النظام الموكّل والمحامي تلقائياً عبر الرسائل والبريد قبل الموعد بالوقت الذي تحدده.'},
+    {ic:'users',t:'صلاحيات متعددة',d:'صاحب المكتب يمنح كل محامٍ أو إداري صلاحياته بدقة من لوحة التحكم — كل شخص يرى ما يخصّه فقط.'},
+    {ic:'globe',t:'بوابة الموكّل',d:'يُنشئ الموكّل حسابه بنفسه ويتابع قضيته وجلساته ويتواصل مع محاميه — بثقة وخصوصية تامّة.'},
+    {ic:'money',t:'الأتعاب والفواتير',d:'أصدر الفواتير، سجّل الدفعات والدفعات الجزئية، وتابع المتحصّل والمستحق بنظرة واحدة.'},
+    {ic:'chart',t:'تقارير ومؤشرات',d:'إحصائيات حيّة عن القضايا النشطة والإيرادات والجلسات القادمة لاتخاذ قرارات مبنية على أرقام.'},
+  ];
+  const roleCards=Object.entries(ROLES).filter(([k])=>k!=='developer').map(([k,r],i)=>{
+    const emojis={owner:'🏛️',lawyer:'⚖️',client:'🧑',admin:'💼'};
+    const bg={owner:'var(--gold-soft)',lawyer:'rgba(15,87,64,.12)',client:'var(--info-soft)',admin:'#efe4f3'};
+    return `<div class="role-card reveal" style="transition-delay:${i*.08}s"><div class="role-ico" style="background:${bg[k]}">${emojis[k]}</div><h4>${r.label}</h4><p>${r.desc}</p></div>`;
+  }).join('');
+  const plans=DB.org.plans;
+  const planCards=plans.map(p=>{
+    const featList=[
+      `حتى ${p.users<0?'عدد غير محدود من':p.users} مستخدمين`,
+      `${p.cases<0?'قضايا غير محدودة':'حتى '+p.cases+' قضية'}`,
+      'بوابة الموكّل والتذكيرات',
+      'إدارة الأتعاب والفواتير',
+      p.id!=='starter'?'تقارير ومؤشرات متقدمة':null,
+      p.id==='enterprise'?'دعم مخصّص ومدير حساب':null,
+    ];
+    return `<div class="price-card ${p.featured?'featured':''} reveal">
+      ${p.featured?'<div class="price-tag-pop">★ الأكثر اختياراً</div>':''}
+      <div class="price-name">${p.name}</div>
+      <div class="price-desc">${p.desc}</div>
+      <div class="price-amount"><span class="cur">ر.ع</span><span class="val mono">${p.monthly}</span><span class="per">/ شهرياً</span></div>
+      <div class="price-billed">أو ${p.yearly} ر.ع سنوياً (وفّر شهرين)</div>
+      <div class="price-feats">
+        ${featList.filter(Boolean).map(f=>`<div class="price-feat">${icon('check')}<span>${f}</span></div>`).join('')}
+      </div>
+      <button class="btn ${p.featured?'btn-gold':'btn-primary'} btn-block" data-go-auth="signup">ابدأ الآن</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="lp">
+    <nav class="lp-nav" id="lpNav"><div class="lp-nav-inner">
+      <div class="brand"><div class="brand-mark">${icon('scale')}</div>
+        <div><div class="brand-name"><b>لِكس</b> برو</div><div class="brand-sub">LEXPRO · إدارة مكاتب المحاماة</div></div></div>
+      <div class="lp-nav-links">
+        <a href="#features">المزايا</a><a href="#roles">للجميع</a><a href="#pricing">الباقات</a>
+        <button class="btn btn-ghost btn-sm" id="lpTheme">${icon('moon')}</button>
+        <button class="btn btn-ghost btn-sm" data-go-auth="login">تسجيل الدخول</button>
+        <button class="btn btn-primary btn-sm" data-go-auth="signup">ابدأ مجاناً</button>
+      </div>
+    </div></nav>
+
+    <header class="hero"><div class="wrap"><div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-eyebrow"><span class="dot"></span>الأول من نوعه في السوق العُماني</div>
+        <h1>إدارة مكتبك القانوني <span class="accent">بثقة واحتراف</span></h1>
+        <p class="lead">${esc(s.heroSub)}</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" data-go-auth="signup">${icon('zap')} جرّب النظام الآن</button>
+          <button class="btn" data-go-auth="login">${icon('user')} دخول الحساب التجريبي</button>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-item"><span class="num mono">+500</span><span class="lbl">قضية تُدار بسلاسة</span></div>
+          <div class="hero-trust-item"><span class="num mono">5</span><span class="lbl">أدوار وصلاحيات</span></div>
+          <div class="hero-trust-item"><span class="num mono">24/7</span><span class="lbl">تذكيرات تلقائية</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-glow hg1"></div><div class="hero-glow hg2"></div>
+        <div class="hv-card hv-main">
+          <div class="hv-head"><span class="hv-dot" style="background:var(--gold)"></span><span class="hv-title">القضايا النشطة</span><span class="badge badge-ok"><span class="dot"></span>مباشر</span></div>
+          ${['نزاع عقد مقاولات','دعوى فصل تعسّفي','قضية حضانة ونفقة'].map((t,i)=>`
+            <div class="hv-row"><div class="hv-avatar">${['تج','عم','أح'][i]}</div>
+              <div style="flex:1"><div style="font-family:var(--font-d);font-weight:700;font-size:.84rem">${t}</div>
+              <div class="hv-line" style="width:${[70,50,60][i]}%;margin-top:5px"></div></div>
+              <span class="badge ${['badge-warn','badge-info','badge-gold'][i]}" style="font-size:.66rem">${['قيد النظر','بانتظار الحكم','نشطة'][i]}</span></div>`).join('')}
+        </div>
+        <div class="hv-card hv-mini">
+          <div class="hv-stat"><span class="l">الإيرادات هذا الشهر</span><span class="v mono">12,400 <span style="font-size:.7rem">ر.ع</span></span></div>
+          <div class="hv-bars">${[40,65,50,80,60,90].map(h=>`<div class="hv-bar" style="height:${h}%"></div>`).join('')}</div>
+        </div>
+        <div class="hv-card hv-mini2">
+          <div class="row" style="gap:9px"><div class="li-ico" style="background:var(--info-soft);color:var(--info);width:36px;height:36px">${icon('bell')}</div>
+          <div><div style="font-family:var(--font-d);font-weight:700;font-size:.8rem">تذكير بجلسة</div><div style="font-size:.7rem;color:var(--muted)">بعد يومين · ١٠ ص</div></div></div>
+        </div>
+      </div>
+    </div></div></header>
+
+    <section class="section" id="features"><div class="wrap">
+      <div class="section-head reveal"><div class="section-eyebrow">كل ما يحتاجه مكتبك</div>
+        <h2>منصة واحدة بدل عشرة ملفات وجداول</h2>
+        <p>صُمّمت لِكس برو خصيصاً لمكاتب المحاماة في عُمان لتجمع كل تفاصيل العمل في مكان واحد منظّم وآمن.</p></div>
+      <div class="feat-grid">${feats.map((f,i)=>`<div class="feat reveal" style="transition-delay:${i*.06}s"><div class="feat-ico">${icon(f.ic)}</div><h3>${f.t}</h3><p>${f.d}</p></div>`).join('')}</div>
+    </div></section>
+
+    <section class="section alt" id="roles"><div class="wrap">
+      <div class="section-head reveal"><div class="section-eyebrow">تجربة مخصّصة لكل دور</div>
+        <h2>واجهة تناسب كل مستخدم</h2>
+        <p>من صاحب المكتب إلى الموكّل — كل شخص يحصل على لوحة تحكم تعرض ما يهمّه فقط، بصلاحيات يحددها المكتب.</p></div>
+      <div class="roles-grid">${roleCards}</div>
+    </div></section>
+
+    <section class="section" id="pricing"><div class="wrap">
+      <div class="section-head reveal"><div class="section-eyebrow">باقات مرنة</div>
+        <h2>اختر ما يناسب حجم مكتبك</h2>
+        <p>ابدأ صغيراً وتوسّع وقتما تشاء. الاشتراك الشهري أو السنوي — وكل الباقات تشمل التحديثات والدعم.</p></div>
+      <div class="price-grid">${planCards}</div>
+      <p class="center muted" style="margin-top:28px;font-size:.9rem">جميع الأسعار بالريال العُماني · يمكن الإلغاء في أي وقت</p>
+    </div></section>
+
+    <section class="section"><div class="wrap"><div class="cta-band reveal">
+      <h2>كن أول مكتب محاماة عُماني يعمل بذكاء</h2>
+      <p>جرّب لِكس برو الآن بحساب تجريبي كامل — لا حاجة لبطاقة، وكل شيء جاهز للاستخدام فوراً.</p>
+      <button class="btn btn-gold" data-go-auth="signup" style="position:relative">${icon('arrowLeft')} أنشئ حسابك الآن</button>
+    </div></div></section>
+
+    <footer class="lp-foot"><div class="wrap">
+      <div class="lp-foot-grid">
+        <div><div class="brand" style="margin-bottom:14px"><div class="brand-mark">${icon('scale')}</div>
+          <div><div class="brand-name"><b>لِكس</b> برو</div><div class="brand-sub">LEXPRO</div></div></div>
+          <p style="font-size:.9rem;max-width:280px;line-height:1.6">نظام إدارة مكاتب المحاماة المصمّم للسوق العُماني. قضايا، جلسات، موكّلون، وأتعاب في منصة واحدة.</p></div>
+        <div><h5>المنتج</h5><a href="#features">المزايا</a><a href="#pricing">الباقات</a><a href="#" data-go-auth="login">تسجيل الدخول</a></div>
+        <div><h5>الأدوار</h5><a href="#roles">صاحب المكتب</a><a href="#roles">المحامون</a><a href="#roles">الموكّلون</a></div>
+        <div><h5>تواصل</h5><a href="#">info@lexpro.om</a><a href="#">مسقط، سلطنة عُمان</a><a href="#">+968 24 000 000</a></div>
+      </div>
+      <div class="lp-foot-bottom"><span>© ${new Date().getFullYear()} لِكس برو — جميع الحقوق محفوظة</span><span>صُنع بعناية في سلطنة عُمان 🇴🇲</span></div>
+    </div></footer>
+  </div>`;
+});
+ROUTES.landing.after=()=>{
+  const nav=$('#lpNav');
+  const onScroll=()=>nav&&nav.classList.toggle('scrolled',window.scrollY>20);
+  window.addEventListener('scroll',onScroll);onScroll();
+  // reveal on scroll
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  $$('.reveal').forEach(el=>io.observe(el));
+  $$('[data-go-auth]').forEach(b=>b.addEventListener('click',()=>navigate('auth',{mode:b.dataset.goAuth})));
+  $$('.lp-nav-links a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=$(a.getAttribute('href'));t&&t.scrollIntoView({behavior:'smooth'});}));
+  const tb=$('#lpTheme');if(tb)tb.addEventListener('click',toggleTheme);
+};
+
+/* ---------- THEME ---------- */
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('lexpro_theme',next);
+  // update any theme icons
+  $$('[id$="Theme"],#topTheme,#lpTheme').forEach(b=>{if(b)b.innerHTML=icon(next==='dark'?'sun':'moon');});
+}
+function initTheme(){
+  const t=localStorage.getItem('lexpro_theme');
+  if(t)document.documentElement.setAttribute('data-theme',t);
+}
+
+/* ============================================================
+   VIEW: AUTH (login + signup)
+   ============================================================ */
+let authMode='login';
+let authRole='client';
+route('auth',(p)=>{
+  authMode=p.mode||authMode||'login';
+  const isLogin=authMode==='login';
+  const s=DB.org.settings;
+  const demoCreds=[
+    {r:'صاحب المكتب',e:'owner@lexpro.om'},
+    {r:'محامٍ',e:'amal@lexpro.om'},
+    {r:'موكّل',e:'client@lexpro.om'},
+    {r:'إداري',e:'admin@lexpro.om'},
+    {r:'مطوّر',e:'dev@lexpro.om'},
+  ];
+  return `<div class="auth">
+    <aside class="auth-aside">
+      <div class="auth-aside-top">
+        <div class="brand"><div class="brand-mark">${icon('scale')}</div>
+          <div><div class="brand-name"><b>لِكس</b> برو</div><div class="brand-sub">LEXPRO · إدارة مكاتب المحاماة</div></div></div>
+      </div>
+      <div class="auth-aside-mid">
+        <h2>منصّة المحاماة الذكية<br>في سلطنة عُمان</h2>
+        <p>إدارة كاملة لقضايا مكتبك وجلساته وموكّليه وأتعابه — بأمان وخصوصية، ومن أي جهاز.</p>
+        <div class="auth-points">
+          <div class="auth-point"><div class="auth-point-ico">${icon('folder')}</div><span>قضايا وجلسات منظّمة في مكان واحد</span></div>
+          <div class="auth-point"><div class="auth-point-ico">${icon('bell')}</div><span>تذكير تلقائي للموكّل بالجلسات</span></div>
+          <div class="auth-point"><div class="auth-point-ico">${icon('shield')}</div><span>صلاحيات دقيقة لكل عضو في الفريق</span></div>
+        </div>
+      </div>
+      <div class="auth-aside-bot">
+        <div class="auth-quote">
+          <p>"وفّر علينا النظام ساعات من العمل اليدوي، وأصبح موكّلونا يتابعون قضاياهم بأنفسهم."</p>
+          <div class="by"><div class="av">ح</div><div><b>مكتب الحارثي للمحاماة</b><span>مسقط، عُمان</span></div></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="auth-main"><div class="auth-box">
+      <div class="brand" style="justify-content:center"><div class="brand-mark">${icon('scale')}</div>
+        <div><div class="brand-name"><b>لِكس</b> برو</div></div></div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab ${isLogin?'active':''}" data-mode="login">تسجيل الدخول</div>
+        <div class="auth-tab ${!isLogin?'active':''}" data-mode="signup">حساب جديد</div>
+      </div>
+
+      <div class="auth-h">
+        <h1>${isLogin?'مرحباً بعودتك':'أنشئ حسابك'}</h1>
+        <p>${isLogin?'ادخل بياناتك للوصول إلى لوحة التحكم':'سجّل كموكّل لمتابعة قضيتك، أو كمكتب محاماة'}</p>
+      </div>
+
+      ${isLogin?`
+        <div class="demo-hint">${icon('info')} <b>حسابات تجريبية جاهزة</b> — اضغط لتعبئة البيانات (كلمة المرور: <span class="mono">1234</span>)
+          <div class="demo-creds">${demoCreds.map(c=>`<span class="demo-cred" data-fill="${c.e}">${c.e}</span>`).join('')}</div>
+        </div>
+      `:''}
+
+      <form id="authForm" novalidate>
+        ${!isLogin?`
+          <div class="field"><label>أنا أسجّل بصفتي <span class="req">*</span></label>
+            <div class="role-pick">
+              <div class="role-opt ${authRole==='client'?'sel':''}" data-role="client"><div class="ro-ico">🧑</div><div class="ro-name">موكّل (زبون)</div><div class="ro-desc">لمتابعة قضيتي</div></div>
+              <div class="role-opt ${authRole==='owner'?'sel':''}" data-role="owner"><div class="ro-ico">🏛️</div><div class="ro-name">مكتب محاماة</div><div class="ro-desc">لإدارة مكتبي</div></div>
+            </div>
+          </div>
+          <div class="field"><label>الاسم الكامل <span class="req">*</span></label>
+            <input class="input" name="name" placeholder="مثال: عبدالله بن محمد" autocomplete="name"></div>
+        `:''}
+        <div class="field"><label>البريد الإلكتروني <span class="req">*</span></label>
+          <div class="input-group"><input class="input" name="email" type="email" placeholder="name@example.com" autocomplete="email" dir="ltr" style="text-align:right">
+            <span class="ig-icon">${icon('mail')}</span></div></div>
+        ${!isLogin?`<div class="field"><label>رقم الهاتف <span class="req">*</span></label>
+          <div class="input-group"><input class="input" name="phone" placeholder="+968 9XXX XXXX" autocomplete="tel" dir="ltr" style="text-align:right">
+            <span class="ig-icon">${icon('phone')}</span></div></div>`:''}
+        <div class="field"><label>كلمة المرور <span class="req">*</span></label>
+          <div class="input-group"><input class="input" name="pass" type="password" placeholder="••••••••" autocomplete="${isLogin?'current-password':'new-password'}">
+            <span class="ig-icon" style="cursor:pointer;pointer-events:auto" id="togglePass">${icon('eye')}</span></div></div>
+        <div id="authError" class="field-error" style="margin-bottom:14px;display:none"></div>
+        <button type="submit" class="btn btn-primary btn-block" style="padding:14px">
+          ${isLogin?icon('lock'):icon('user')} ${isLogin?'دخول':'إنشاء الحساب'}
+        </button>
+      </form>
+
+      <div class="auth-foot">
+        ${isLogin?'ليس لديك حساب؟ <a data-mode="signup">سجّل الآن</a>':'لديك حساب بالفعل؟ <a data-mode="login">سجّل الدخول</a>'}
+        <br><a style="color:var(--muted);font-weight:600;font-size:.86rem;margin-top:8px;display:inline-block" id="backHome">← العودة للصفحة الرئيسية</a>
+      </div>
+    </div></main>
+  </div>`;
+});
+ROUTES.auth.after=()=>{
+  $$('.auth-tab,[data-mode]').forEach(t=>t.addEventListener('click',()=>navigate('auth',{mode:t.dataset.mode})));
+  $$('.role-opt').forEach(r=>r.addEventListener('click',()=>{authRole=r.dataset.role;$$('.role-opt').forEach(x=>x.classList.toggle('sel',x===r));}));
+  $$('[data-fill]').forEach(c=>c.addEventListener('click',()=>{const f=$('#authForm');f.email.value=c.dataset.fill;f.pass.value='1234';f.email.focus();}));
+  const tp=$('#togglePass');if(tp)tp.addEventListener('click',()=>{const i=$('#authForm').pass;i.type=i.type==='password'?'text':'password';tp.innerHTML=icon(i.type==='password'?'eye':'eyeOff');});
+  const bh=$('#backHome');if(bh)bh.addEventListener('click',()=>navigate('landing'));
+  const form=$('#authForm');
+  if(form)form.addEventListener('submit',e=>{e.preventDefault();authMode==='login'?doLogin(form):doSignup(form);});
+};
+function showAuthErr(msg){const e=$('#authError');if(e){e.textContent=msg;e.style.display='block';}}
+function doLogin(form){
+  const email=form.email.value.trim().toLowerCase();
+  const pass=form.pass.value;
+  if(!email||!pass)return showAuthErr('الرجاء إدخال البريد وكلمة المرور.');
+  const u=DB.users.find(u=>u.email.toLowerCase()===email);
+  if(!u)return showAuthErr('لا يوجد حساب بهذا البريد. تأكد منه أو أنشئ حساباً جديداً.');
+  if(u.pass!==pass)return showAuthErr('كلمة المرور غير صحيحة.');
+  if(!u.active)return showAuthErr('هذا الحساب موقوف. تواصل مع إدارة المكتب.');
+  const btn=form.querySelector('button[type=submit]');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> جارٍ الدخول...';
+  setTimeout(()=>{setSession(u.id);toast(`أهلاً ${u.name.split(' ').slice(0,2).join(' ')}`,'ok','تم تسجيل الدخول');navigate('dashboard');},550);
+}
+function doSignup(form){
+  const name=form.name.value.trim();
+  const email=form.email.value.trim().toLowerCase();
+  const phone=form.phone.value.trim();
+  const pass=form.pass.value;
+  if(!name||!email||!phone||!pass)return showAuthErr('الرجاء تعبئة جميع الحقول المطلوبة.');
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email))return showAuthErr('صيغة البريد الإلكتروني غير صحيحة.');
+  if(pass.length<4)return showAuthErr('كلمة المرور يجب أن تكون 4 أحرف على الأقل.');
+  if(DB.users.some(u=>u.email.toLowerCase()===email))return showAuthErr('هذا البريد مسجّل مسبقاً. سجّل الدخول بدلاً من ذلك.');
+  if(authRole==='client' && !DB.org.settings.allowClientSignup)return showAuthErr('تسجيل الموكّلين الذاتي معطّل حالياً. تواصل مع المكتب.');
+  const btn=form.querySelector('button[type=submit]');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> جارٍ الإنشاء...';
+  const u={id:uid('u'),org:DB.org.id,name,email,phone,pass,role:authRole,
+    perms:clone(ROLE_DEFAULT_PERMS[authRole]||[]),active:true,created:nowISO(),
+    title:authRole==='client'?'موكّل':'المحامي المؤسس'};
+  DB.users.push(u);
+  // log activity + notify owner
+  DB.activity.unshift({id:uid('a'),org:DB.org.id,user:u.id,text:authRole==='client'?'سجّل كموكّل جديد':'أنشأ مكتباً جديداً',target:name,date:nowISO(),type:'user'});
+  if(authRole==='client'){
+    const owner=DB.users.find(x=>x.role==='owner');
+    if(owner)DB.notifications.unshift({id:uid('n'),org:DB.org.id,user:owner.id,type:'user',title:'موكّل جديد سجّل في النظام',body:`${name} أنشأ حساباً — يمكنك ربطه بقضية ومنحه الصلاحيات.`,date:nowISO(),read:false,icon:'user'});
+  }
+  saveDB();
+  setTimeout(()=>{setSession(u.id);toast('تم إنشاء حسابك بنجاح، أهلاً بك!','ok','مرحباً');navigate('dashboard');},650);
+}
+
+/* ============================================================
+   APP SHELL — sidebar + topbar (wraps logged-in views)
+   ============================================================ */
+const NAV_ITEMS=[
+  {view:'dashboard',label:'لوحة التحكم',icon:'dashboard',perm:null,group:null},
+  {view:'cases',label:'القضايا',icon:'folder',perm:'cases.view',group:'العمل',count:()=>visibleCases().length},
+  {view:'sessions',label:'الجلسات',icon:'calendar',perm:'sessions.manage',group:'العمل',count:()=>Q.upcomingSessions().filter(canSeeSession).length},
+  {view:'clients',label:'الموكّلون',icon:'users',perm:'clients.manage',group:'العمل',count:()=>Q.clients().length},
+  {view:'documents',label:'الوثائق',icon:'doc',perm:'documents.manage',group:'العمل'},
+  {view:'billing',label:'الأتعاب والفواتير',icon:'money',perm:'billing.view',group:'المالية'},
+  {view:'reports',label:'التقارير',icon:'chart',perm:'reports.view',group:'المالية'},
+  {view:'myCase',label:'قضيتي',icon:'folder',perm:null,group:'حسابي',clientOnly:true},
+  {view:'messages',label:'الرسائل',icon:'msg',perm:null,group:'حسابي',clientOnly:true},
+  {view:'team',label:'الفريق والصلاحيات',icon:'shield',perm:'users.manage',group:'الإدارة'},
+  {view:'cms',label:'إدارة الموقع',icon:'settings',perm:'cms.manage',group:'الإدارة'},
+];
+function navItemVisible(it,user){
+  if(it.clientOnly)return user.role==='client';
+  if(user.role==='client')return it.view==='dashboard';
+  if(it.perm===null)return true;
+  return Q.hasPerm(user,it.perm);
+}
+function visibleCases(){
+  const u=currentUser();
+  if(!u)return[];
+  if(u.role==='client')return DB.cases.filter(c=>c.client===u.id);
+  if(u.role==='lawyer')return DB.cases; // lawyers see office cases (could restrict to own)
+  return DB.cases;
+}
+function canSeeSession(s){const u=currentUser();if(u.role!=='client')return true;const c=Q.case(s.case);return c&&c.client===u.id;}
+
+function shell(activeView,content){
+  const u=currentUser();
+  const org=DB.org;
+  const planName=org.plans.find(p=>p.id===org.plan)?.name||'';
+  // group nav
+  const groups={};
+  NAV_ITEMS.filter(it=>navItemVisible(it,u)).forEach(it=>{(groups[it.group||'_']=groups[it.group||'_']||[]).push(it);});
+  let navHTML='';
+  for(const [g,items] of Object.entries(groups)){
+    if(g!=='_')navHTML+=`<div class="sb-group-label">${g}</div>`;
+    navHTML+=items.map(it=>{
+      const cnt=it.count?it.count():null;
+      return `<div class="sb-link ${it.view===activeView?'active':''}" data-view="${it.view}">
+        ${icon(it.icon)}<span>${it.label}</span>${cnt?`<span class="sb-count mono">${cnt}</span>`:''}</div>`;
+    }).join('');
+  }
+  const [c1,c2]=avColor(u.name);
+  const unread=DB.notifications.filter(n=>n.user===u.id&&!n.read).length;
+  const title=viewTitle(activeView);
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  return `<div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-head">
+        <div class="sb-org"><div class="sb-org-mark">${icon('scale')}</div>
+          <div class="sb-org-info"><div class="sb-org-name">${esc(org.settings.siteName)}</div>
+            <div class="sb-org-plan">باقة ${planName}</div></div></div>
+      </div>
+      <nav class="sb-nav">${navHTML}</nav>
+      <div class="sb-foot">
+        <div class="sb-user" id="sbUser">
+          <div class="sb-avatar" style="background:linear-gradient(135deg,${c2},${c1});color:#fff">${initials(u.name)}</div>
+          <div class="sb-user-info"><div class="sb-user-name">${esc(u.name.split(' ').slice(0,2).join(' '))}</div>
+            <div class="sb-user-role">${ROLES[u.role].label}</div></div>
+          ${icon('settings','')}
+        </div>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn btn-icon btn-ghost menu-toggle" id="menuToggle">${icon('menu')}</button>
+        <div class="topbar-title"><h1>${title}</h1></div>
+        <div class="search-box"><input placeholder="ابحث في القضايا والموكّلين..." id="globalSearch">${icon('search')}</div>
+        <button class="btn btn-icon btn-ghost" id="topTheme" title="المظهر">${icon(isDark?'sun':'moon')}</button>
+        <button class="btn btn-icon btn-ghost" id="notifBtn" title="الإشعارات" style="position:relative">${icon('bell')}${unread?`<span class="notif-dot"></span>`:''}</button>
+      </header>
+      <div class="content">${content}</div>
+    </div>
+  </div>`;
+}
+function viewTitle(v){return {dashboard:'لوحة التحكم',cases:'القضايا',sessions:'الجلسات',clients:'الموكّلون',documents:'الوثائق',billing:'الأتعاب والفواتير',reports:'التقارير',team:'الفريق والصلاحيات',cms:'لوحة إدارة الموقع',myCase:'قضيتي',messages:'الرسائل',caseDetail:'تفاصيل القضية',profile:'الملف الشخصي'}[v]||'لِكس برو';}
+
+function bindShell(activeView){
+  $$('.sb-link').forEach(l=>l.addEventListener('click',()=>{closeSidebar();navigate(l.dataset.view);}));
+  const mt=$('#menuToggle');if(mt)mt.addEventListener('click',openSidebar);
+  const tt=$('#topTheme');if(tt)tt.addEventListener('click',toggleTheme);
+  const nb=$('#notifBtn');if(nb)nb.addEventListener('click',e=>{e.stopPropagation();openNotifications(nb);});
+  const su=$('#sbUser');if(su)su.addEventListener('click',e=>{e.stopPropagation();openUserMenu(su);});
+  const gs=$('#globalSearch');if(gs)gs.addEventListener('keydown',e=>{if(e.key==='Enter'&&gs.value.trim())openSearchResults(gs.value.trim());});
+}
+function openSidebar(){const sb=$('#sidebar');if(!sb)return;sb.classList.add('open');const bd=document.createElement('div');bd.className='sb-backdrop';bd.id='sbBackdrop';bd.onclick=closeSidebar;$('.shell').appendChild(bd);}
+function closeSidebar(){const sb=$('#sidebar');if(sb)sb.classList.remove('open');const bd=$('#sbBackdrop');if(bd)bd.remove();}
+
+function openUserMenu(anchor){
+  closeFloaters();
+  const u=currentUser();
+  const menu=document.createElement('div');
+  menu.className='dropdown-menu floater';
+  menu.style.cssText='bottom:74px;right:14px;width:230px';
+  menu.innerHTML=`
+    <div style="padding:10px 12px;border-bottom:1px solid var(--line);margin-bottom:6px">
+      <div style="font-family:var(--font-d);font-weight:700">${esc(u.name.split(' ').slice(0,2).join(' '))}</div>
+      <div style="font-size:.8rem;color:var(--muted)">${esc(u.email)}</div>
+      <span class="badge badge-gold" style="margin-top:8px">${ROLES[u.role].label}</span>
+    </div>
+    <button class="dd-item" data-act="profile">${icon('user')} الملف الشخصي</button>
+    <button class="dd-item" data-act="theme">${icon('palette')} تبديل المظهر</button>
+    <div class="dd-sep"></div>
+    <button class="dd-item danger" data-act="logout">${icon('logout')} تسجيل الخروج</button>`;
+  $('.sidebar').appendChild(menu);
+  menu.querySelector('[data-act="profile"]').onclick=()=>{closeFloaters();navigate('profile');};
+  menu.querySelector('[data-act="theme"]').onclick=()=>{closeFloaters();toggleTheme();};
+  menu.querySelector('[data-act="logout"]').onclick=()=>{closeFloaters();doLogout();};
+  setTimeout(()=>document.addEventListener('click',closeFloatersOnce),0);
+}
+function doLogout(){confirmDialog({title:'تسجيل الخروج',message:'هل تريد الخروج من حسابك؟',confirmText:'خروج',onConfirm:()=>{clearSession();toast('تم تسجيل الخروج بنجاح','info','إلى اللقاء');navigate('landing');}});}
+
+function openNotifications(anchor){
+  closeFloaters();
+  const u=currentUser();
+  const notifs=DB.notifications.filter(n=>n.user===u.id).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+  const menu=document.createElement('div');
+  menu.className='dropdown-menu floater';
+  menu.style.cssText='top:60px;left:18px;width:min(360px,90vw);padding:0;max-height:440px;overflow:hidden;display:flex;flex-direction:column';
+  menu.innerHTML=`
+    <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+      <b style="font-family:var(--font-d)">الإشعارات</b>
+      <button class="btn btn-ghost btn-sm" data-readall>تعليم الكل كمقروء</button></div>
+    <div style="overflow-y:auto;flex:1">
+      ${notifs.length?notifs.map(n=>`
+        <div class="list-item" style="padding:13px 16px;${n.read?'':'background:var(--gold-soft)'}">
+          <div class="li-ico" style="background:var(--info-soft);color:var(--info);width:38px;height:38px">${icon(n.icon||'bell')}</div>
+          <div class="li-body"><div class="li-title" style="font-size:.9rem;white-space:normal">${esc(n.title)}</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:2px">${esc(n.body)}</div>
+            <div style="font-size:.74rem;color:var(--muted-2);margin-top:4px">${timeAgo(n.date)}</div></div>
+        </div>`).join(''):`<div class="empty" style="padding:36px 20px"><div class="empty-ico" style="width:60px;height:60px">${icon('bell')}</div><p style="font-size:.9rem">لا توجد إشعارات حالياً</p></div>`}
+    </div>`;
+  $('.main').appendChild(menu);
+  const ra=menu.querySelector('[data-readall]');
+  if(ra)ra.onclick=()=>{DB.notifications.forEach(n=>{if(n.user===u.id)n.read=true;});saveDB();closeFloaters();render();bindCurrentView();};
+  setTimeout(()=>document.addEventListener('click',closeFloatersOnce),0);
+}
+function closeFloaters(){$$('.floater').forEach(f=>f.remove());document.removeEventListener('click',closeFloatersOnce);}
+function closeFloatersOnce(e){if(e.target.closest('.floater'))return;closeFloaters();}
+
+/* ---------- per-view binder dispatch ---------- */
+const VIEW_BINDERS={};
+function bindCurrentView(){
+  const v=CURRENT.view;
+  if(SESSION){bindShell(v);}
+  if(VIEW_BINDERS[v])VIEW_BINDERS[v](CURRENT.params);
+}
+
+/* ============================================================
+   VIEW: DASHBOARD (role-aware)
+   ============================================================ */
+route('dashboard',()=>{
+  const u=currentUser();
+  if(u.role==='client')return shell('dashboard',clientDashboard(u));
+  return shell('dashboard',staffDashboard(u));
+});
+VIEW_BINDERS.dashboard=()=>{
+  const u=currentUser();
+  $$('[data-open-case]').forEach(el=>el.addEventListener('click',()=>navigate('caseDetail',{id:el.dataset.openCase})));
+  $$('[data-nav]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.nav)));
+  $$('[data-remind]').forEach(b=>b.addEventListener('click',()=>sendReminder(b.dataset.remind)));
+  if(u.role==='client'){
+    const mf=$('#clientMsgForm');
+    if(mf)mf.addEventListener('submit',e=>{e.preventDefault();sendClientMessage(mf);});
+  }
+};
+
+function staffDashboard(u){
+  const cases=visibleCases();
+  const active=cases.filter(c=>c.stage!=='closed');
+  const upcoming=Q.upcomingSessions().slice(0,5);
+  const totalRev=DB.invoices.reduce((s,i)=>s+(i.paid||0),0);
+  const outstanding=DB.invoices.reduce((s,i)=>s+invoiceBalance(i),0);
+  const clients=Q.clients().length;
+  const greeting=(()=>{const h=new Date().getHours();return h<12?'صباح الخير':h<17?'مساء الخير':'مساء الخير';})();
+  const recentAct=DB.activity.slice(0,6);
+
+  const stats=[
+    {ic:'folder',cls:'gold',val:active.length,label:'قضايا نشطة',trend:'+2',up:true},
+    {ic:'calendar',cls:'info',val:upcoming.length,label:'جلسات قادمة',sub:upcoming[0]?fmtDay(upcoming[0].date):'—'},
+    {ic:'users',cls:'ink',val:clients,label:'موكّلون',trend:'+1',up:true},
+    {ic:'money',cls:'ok',val:fmtMoney(totalRev),label:'إيرادات محصّلة (ر.ع)',sub:`مستحق: ${fmtMoney(outstanding)}`},
+  ];
+
+  // case stage distribution
+  const stageCounts={};Object.keys(CASE_STAGES).forEach(k=>stageCounts[k]=cases.filter(c=>c.stage===k).length);
+  const maxStage=Math.max(1,...Object.values(stageCounts));
+
+  return `<div class="anim-up">
+    <div class="page-head">
+      <div><h2>${greeting}، ${esc(u.name.split(' ').slice(1,3).join(' ')||u.name)} 👋</h2>
+        <p>إليك ملخّص نشاط المكتب اليوم — ${fmtDate(nowISO())}</p></div>
+      <div class="page-actions">
+        ${Q.hasPerm(u,'cases.manage')?`<button class="btn btn-primary" data-new-case>${icon('plus')} قضية جديدة</button>`:''}
+        ${Q.hasPerm(u,'sessions.manage')?`<button class="btn" data-new-session>${icon('calendar')} جلسة</button>`:''}
+      </div>
+    </div>
+
+    <div class="stats-grid stagger">
+      ${stats.map(s=>`<div class="stat"><div class="stat-top"><div class="stat-ico ${s.cls}">${icon(s.ic)}</div>
+        ${s.trend?`<span class="stat-trend ${s.up?'up':'down'}">${icon(s.up?'arrowUp':'arrowDown')}${s.trend}</span>`:''}</div>
+        <div class="stat-val mono">${s.val}</div><div class="stat-label">${s.label}</div>
+        ${s.sub?`<div style="font-size:.8rem;color:var(--muted-2);margin-top:6px">${s.sub}</div>`:''}</div>`).join('')}
+    </div>
+
+    <div class="grid-12" style="margin-bottom:20px">
+      <div class="panel anim-up" style="animation-delay:.1s">
+        <div class="panel-head"><h3>${icon('calendar')} الجلسات القادمة</h3>
+          <button class="btn btn-ghost btn-sm" data-nav="sessions">عرض الكل ${icon('arrowLeft')}</button></div>
+        <div class="panel-body flush">
+          ${upcoming.length?upcoming.map(s=>{
+            const c=Q.case(s.case);const du=daysUntil(s.date);
+            const urg=du<=1?'danger':du<=3?'warn':'info';
+            return `<div class="list-item" data-open-case="${c?.id}" style="cursor:pointer">
+              <div class="li-ico" style="background:var(--${urg==='danger'?'danger':urg==='warn'?'warn':'info'}-soft);color:var(--${urg==='danger'?'danger':urg==='warn'?'warn':'info'})">${icon('gavel')}</div>
+              <div class="li-body"><div class="li-title">${esc(s.title)} — ${esc(c?.title||'')}</div>
+                <div class="li-meta"><span class="mono">${esc(c?.number||'')}</span><span class="dot-sep"></span>${esc(s.court)}<span class="dot-sep"></span>${esc(s.hall||'')}</div></div>
+              <div class="li-side"><span class="badge badge-${urg}">${du<=0?'اليوم':du===1?'غداً':'بعد '+du+' أيام'}</span>
+                <span style="font-size:.78rem;color:var(--muted)" class="mono">${fmtDateTime(s.date).split('•')[1]}</span></div>
+            </div>`;}).join(''):emptyState('calendar','لا جلسات قادمة','كل الجلسات مكتملة أو لم تُجدول بعد.')}
+        </div>
+      </div>
+
+      <div class="panel anim-up" style="animation-delay:.18s">
+        <div class="panel-head"><h3>${icon('layers')} توزيع القضايا</h3></div>
+        <div class="panel-body">
+          ${Object.entries(CASE_STAGES).map(([k,st])=>`
+            <div style="margin-bottom:16px">
+              <div class="row-between" style="margin-bottom:7px"><span style="font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:50%;background:${st.color}"></span>${st.label}</span>
+                <span class="mono" style="font-weight:700">${stageCounts[k]}</span></div>
+              <div class="progress"><div class="progress-bar" style="width:${stageCounts[k]/maxStage*100}%;background:${st.color}"></div></div>
+            </div>`).join('')}
+          <div class="row-between" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+            <span class="muted" style="font-size:.9rem">إجمالي القضايا</span><span class="mono" style="font-family:var(--font-d);font-weight:800;font-size:1.4rem;color:var(--ink)">${cases.length}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-12">
+      <div class="panel anim-up" style="animation-delay:.24s">
+        <div class="panel-head"><h3>${icon('folder')} أحدث القضايا</h3>
+          <button class="btn btn-ghost btn-sm" data-nav="cases">عرض الكل ${icon('arrowLeft')}</button></div>
+        <div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+          <thead><tr><th>القضية</th><th>الموكّل</th><th>المرحلة</th><th>المحامي</th></tr></thead>
+          <tbody>${cases.slice(0,5).map(c=>{
+            const st=CASE_STAGES[c.stage];const cl=Q.user(c.client);const lw=Q.user(c.lawyer);
+            const[a1,a2]=avColor(cl?.name);
+            return `<tr data-open-case="${c.id}" style="cursor:pointer">
+              <td><div class="cell-main">${esc(c.title)}</div><div class="cell-sub mono">${esc(c.number)}</div></td>
+              <td><div class="usercell"><div class="av" style="background:linear-gradient(135deg,${a2},${a1})">${initials(cl?.name)}</div><div class="info"><div class="nm" style="font-size:.88rem">${esc((cl?.name||'').split(' ').slice(0,2).join(' '))}</div></div></div></td>
+              <td><span class="badge" style="background:${st.color}1a;color:${st.color}">${st.label}</span></td>
+              <td class="muted" style="font-size:.86rem">${esc((lw?.name||'').split(' ').slice(0,2).join(' '))}</td>
+            </tr>`;}).join('')}</tbody>
+        </table></div></div>
+      </div>
+
+      <div class="panel anim-up" style="animation-delay:.3s">
+        <div class="panel-head"><h3>${icon('zap')} النشاط الأخير</h3></div>
+        <div class="panel-body"><div class="timeline">
+          ${recentAct.map((a,i)=>{const usr=Q.user(a.user);const colors={case:'ink',invoice:'',session:'info',doc:'ok',user:'danger'};
+            return `<div class="tl-item"><div class="tl-dot ${colors[a.type]||''}"></div>
+              <div class="tl-time">${timeAgo(a.date)}</div>
+              <div class="tl-title" style="font-size:.9rem">${esc((usr?.name||'').split(' ').slice(0,2).join(' '))} ${esc(a.text)}</div>
+              <div class="tl-desc mono" style="font-size:.82rem">${esc(a.target)}</div></div>`;}).join('')}
+        </div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- CLIENT DASHBOARD ---------- */
+function clientDashboard(u){
+  const cases=DB.cases.filter(c=>c.client===u.id);
+  const myCaseIds=cases.map(c=>c.id);
+  const sessions=DB.sessions.filter(s=>myCaseIds.includes(s.case)&&s.status==='upcoming').sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const invoices=DB.invoices.filter(i=>i.client===u.id);
+  const outstanding=invoices.reduce((s,i)=>s+invoiceBalance(i),0);
+  const msgs=DB.messages.filter(m=>(m.from===u.id||m.to===u.id)).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-6);
+  const greeting=(()=>{const h=new Date().getHours();return h<12?'صباح الخير':'مساء الخير';})();
+  const myLawyer=cases[0]?Q.user(cases[0].lawyer):null;
+
+  return `<div class="anim-up">
+    <div class="page-head">
+      <div><h2>${greeting}، ${esc(u.name.split(' ').slice(0,2).join(' '))} 👋</h2>
+        <p>تابع قضاياك وجلساتك القادمة وتواصل مع محاميك</p></div>
+    </div>
+
+    <div class="stats-grid stagger">
+      <div class="stat"><div class="stat-top"><div class="stat-ico gold">${icon('folder')}</div></div>
+        <div class="stat-val mono">${cases.length}</div><div class="stat-label">قضاياي</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico info">${icon('calendar')}</div></div>
+        <div class="stat-val mono">${sessions.length}</div><div class="stat-label">جلسات قادمة</div>
+        ${sessions[0]?`<div style="font-size:.8rem;color:var(--muted-2);margin-top:6px">أقربها ${fmtDay(sessions[0].date)}</div>`:''}</div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ${outstanding>0?'warn':'ok'}">${icon('money')}</div></div>
+        <div class="stat-val mono">${fmtMoney(outstanding)}</div><div class="stat-label">مستحقات (ر.ع)</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ink">${icon('gavel')}</div></div>
+        <div class="stat-val" style="font-size:1.2rem;font-family:var(--font-d)">${esc((myLawyer?.name||'—').split(' ').slice(1,3).join(' '))}</div><div class="stat-label">محاميك المسؤول</div></div>
+    </div>
+
+    <div class="grid-12" style="margin-bottom:20px">
+      <div class="col gap">
+        <div class="panel anim-up" style="animation-delay:.1s">
+          <div class="panel-head"><h3>${icon('folder')} قضاياي</h3></div>
+          <div class="panel-body flush">
+            ${cases.length?cases.map(c=>{const st=CASE_STAGES[c.stage];const ses=DB.sessions.filter(s=>s.case===c.id&&s.status==='upcoming').sort((a,b)=>new Date(a.date)-new Date(b.date))[0];
+              return `<div class="list-item">
+                <div class="li-ico" style="background:${st.color}1a;color:${st.color}">${icon(st.icon)}</div>
+                <div class="li-body"><div class="li-title">${esc(c.title)}</div>
+                  <div class="li-meta"><span class="mono">${esc(c.number)}</span><span class="dot-sep"></span>${esc(c.court)}
+                    ${ses?`<span class="dot-sep"></span><span style="color:var(--info)">جلسة ${fmtDay(ses.date)}</span>`:''}</div></div>
+                <div class="li-side"><span class="badge" style="background:${st.color}1a;color:${st.color}">${st.label}</span></div>
+              </div>`;}).join(''):emptyState('folder','لا توجد قضايا','لم يتم ربط أي قضية بحسابك بعد. سيقوم مكتب المحاماة بذلك قريباً.')}
+          </div>
+        </div>
+
+        <div class="panel anim-up" style="animation-delay:.16s">
+          <div class="panel-head"><h3>${icon('calendar')} جلساتي القادمة</h3></div>
+          <div class="panel-body flush">
+            ${sessions.length?sessions.map(s=>{const c=Q.case(s.case);const du=daysUntil(s.date);const urg=du<=1?'danger':du<=3?'warn':'info';
+              return `<div class="list-item">
+                <div class="li-ico" style="background:var(--${urg}-soft);color:var(--${urg})">${icon('gavel')}</div>
+                <div class="li-body"><div class="li-title">${esc(s.title)}</div>
+                  <div class="li-meta">${esc(c?.title||'')}<span class="dot-sep"></span>${esc(s.court)}<span class="dot-sep"></span><span class="mono">${fmtDateTime(s.date)}</span></div>
+                  ${s.note?`<div style="font-size:.82rem;color:var(--muted);margin-top:5px">${icon('info')} ${esc(s.note)}</div>`:''}</div>
+                <div class="li-side"><span class="badge badge-${urg}">${du<=0?'اليوم':du===1?'غداً':'بعد '+du+' أيام'}</span></div>
+              </div>`;}).join(''):emptyState('calendar','لا جلسات قادمة','سيصلك تذكير تلقائي عند تحديد أي جلسة.')}
+          </div>
+        </div>
+      </div>
+
+      <div class="col gap">
+        <div class="panel anim-up" style="animation-delay:.2s" style="display:flex;flex-direction:column">
+          <div class="panel-head"><h3>${icon('msg')} التواصل مع المحامي</h3></div>
+          <div class="panel-body flush" style="display:flex;flex-direction:column;height:380px">
+            <div style="flex:1;overflow-y:auto;padding:16px" id="chatScroll">
+              ${msgs.length?msgs.map(m=>{const mine=m.from===u.id;
+                return `<div style="display:flex;justify-content:${mine?'flex-start':'flex-end'};margin-bottom:10px">
+                  <div style="max-width:78%;padding:11px 14px;border-radius:14px;${mine?'background:var(--ink);color:#fff;border-bottom-right-radius:4px':'background:var(--sand-2);border-bottom-left-radius:4px'}">
+                    <div style="font-size:.9rem;line-height:1.5">${esc(m.body)}</div>
+                    <div style="font-size:.68rem;opacity:.7;margin-top:4px" class="mono">${fmtDateTime(m.date).split('•')[1]||''}</div>
+                  </div></div>`;}).join(''):`<div class="empty" style="padding:40px 20px"><div class="empty-ico" style="width:56px;height:56px">${icon('msg')}</div><p style="font-size:.88rem">ابدأ المحادثة مع محاميك</p></div>`}
+            </div>
+            <form id="clientMsgForm" style="padding:12px;border-top:1px solid var(--line);display:flex;gap:8px">
+              <input class="input" name="msg" placeholder="اكتب رسالتك..." style="flex:1" autocomplete="off">
+              <button class="btn btn-primary btn-icon" type="submit">${icon('send')}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${invoices.length?`<div class="panel anim-up" style="animation-delay:.26s">
+      <div class="panel-head"><h3>${icon('money')} فواتيري</h3></div>
+      <div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>الفاتورة</th><th>القضية</th><th>المبلغ</th><th>المدفوع</th><th>الحالة</th></tr></thead>
+        <tbody>${invoices.map(inv=>{const tot=invoiceTotal(inv);const bal=invoiceBalance(inv);
+          const stBadge=inv.status==='paid'?'badge-ok':inv.status==='partial'?'badge-warn':'badge-danger';
+          const stLabel=inv.status==='paid'?'مسددة':inv.status==='partial'?'مدفوعة جزئياً':'غير مسددة';
+          return `<tr><td class="mono cell-main">${esc(inv.number)}</td>
+            <td class="cell-sub">${esc(Q.caseNum(inv.case))}</td>
+            <td class="mono">${fmtMoney(tot)} ر.ع</td>
+            <td class="mono" style="color:var(--ok)">${fmtMoney(inv.paid||0)}</td>
+            <td><span class="badge ${stBadge}">${stLabel}</span></td></tr>`;}).join('')}</tbody>
+      </table></div></div>
+    </div>`:''}
+  </div>`;
+}
+
+/* ---------- shared helpers ---------- */
+function emptyState(ic,title,desc,action){
+  return `<div class="empty"><div class="empty-ico">${icon(ic)}</div><h4>${esc(title)}</h4><p>${esc(desc)}</p>${action||''}</div>`;
+}
+
+function sendReminder(sessionId){
+  const s=DB.sessions.find(x=>x.id===sessionId);if(!s)return;
+  const c=Q.case(s.case);const cl=c?Q.user(c.client):null;
+  const channels=[];if(s.remind.sms)channels.push('SMS');if(s.remind.email)channels.push('بريد');
+  DB.reminderLog.push({id:uid('rem'),session:sessionId,client:cl?.id,at:nowISO(),channels});
+  s.remind.sent=true;
+  if(cl)DB.notifications.unshift({id:uid('n'),org:DB.org.id,user:cl.id,type:'session',title:'تذكير بجلسة قادمة',body:`${s.title} — ${c.title} بتاريخ ${fmtDateTime(s.date)}`,date:nowISO(),read:false,icon:'bell'});
+  saveDB();
+  toast(`أُرسل التذكير إلى ${cl?.name?.split(' ').slice(0,2).join(' ')||'الموكّل'} عبر ${channels.join(' و ')} (محاكاة)`,'ok','تم إرسال التذكير');
+  render();bindCurrentView();
+}
+
+function sendClientMessage(form){
+  const u=currentUser();
+  const body=form.msg.value.trim();if(!body)return;
+  const myCase=DB.cases.find(c=>c.client===u.id);
+  if(!myCase){toast('لا توجد قضية مرتبطة بحسابك للمراسلة.','warn');return;}
+  const lawyer=myCase.lawyer;
+  DB.messages.push({id:uid('m'),org:DB.org.id,case:myCase.id,from:u.id,to:lawyer,body,date:nowISO(),read:false});
+  DB.notifications.unshift({id:uid('n'),org:DB.org.id,user:lawyer,type:'message',title:'رسالة جديدة من موكّل',body:`${u.name.split(' ').slice(0,2).join(' ')}: ${body.slice(0,50)}`,date:nowISO(),read:false,icon:'msg'});
+  saveDB();form.msg.value='';
+  render();bindCurrentView();
+  const cs=$('#chatScroll');if(cs)cs.scrollTop=cs.scrollHeight;
+}
+
+/* ============================================================
+   VIEW: CASES (list + kanban)
+   ============================================================ */
+let casesView='list';
+let casesFilter={stage:'',type:'',q:''};
+route('cases',()=>{
+  const u=currentUser();
+  let cases=visibleCases();
+  if(casesFilter.stage)cases=cases.filter(c=>c.stage===casesFilter.stage);
+  if(casesFilter.type)cases=cases.filter(c=>c.type===casesFilter.type);
+  if(casesFilter.q){const q=casesFilter.q.toLowerCase();cases=cases.filter(c=>c.title.toLowerCase().includes(q)||c.number.includes(q)||(Q.user(c.client)?.name||'').toLowerCase().includes(q));}
+
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>القضايا</h2><p>${cases.length} قضية ${casesFilter.stage||casesFilter.type||casesFilter.q?'(مُصفّاة)':'في المكتب'}</p></div>
+      <div class="page-actions">
+        <div class="segmented"><div class="seg ${casesView==='list'?'active':''}" data-cv="list">${icon('hash')} قائمة</div><div class="seg ${casesView==='kanban'?'active':''}" data-cv="kanban">${icon('layers')} مراحل</div></div>
+        ${Q.hasPerm(u,'cases.manage')?`<button class="btn btn-primary" data-new-case>${icon('plus')} قضية جديدة</button>`:''}
+      </div>
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <div class="search-box" style="width:min(280px,100%);display:block"><input id="caseSearch" placeholder="ابحث برقم القضية أو العنوان أو الموكّل" value="${esc(casesFilter.q)}">${icon('search')}</div>
+      <select class="select" id="caseStageF" style="width:auto;min-width:160px"><option value="">كل المراحل</option>${Object.entries(CASE_STAGES).map(([k,s])=>`<option value="${k}" ${casesFilter.stage===k?'selected':''}>${s.label}</option>`).join('')}</select>
+      <select class="select" id="caseTypeF" style="width:auto;min-width:150px"><option value="">كل الأنواع</option>${CASE_TYPES.map(t=>`<option value="${t}" ${casesFilter.type===t?'selected':''}>${t}</option>`).join('')}</select>
+      ${(casesFilter.stage||casesFilter.type||casesFilter.q)?`<button class="btn btn-ghost btn-sm" id="clearF">${icon('x')} مسح</button>`:''}
+    </div>
+
+    ${cases.length?(casesView==='list'?casesListHTML(cases):casesKanbanHTML(cases)):emptyState('folder','لا توجد قضايا','لم نجد قضايا مطابقة. جرّب تعديل البحث أو أضف قضية جديدة.',Q.hasPerm(u,'cases.manage')?`<button class="btn btn-primary" data-new-case>${icon('plus')} أضف أول قضية</button>`:'')}
+  </div>`;
+  return shell('cases',content);
+});
+function casesListHTML(cases){
+  return `<div class="panel"><div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>القضية</th><th>النوع</th><th>الموكّل</th><th>المحكمة</th><th>المرحلة</th><th>القيمة</th><th></th></tr></thead>
+    <tbody>${cases.map(c=>{const st=CASE_STAGES[c.stage];const cl=Q.user(c.client);const[a1,a2]=avColor(cl?.name);
+      return `<tr data-open-case="${c.id}" style="cursor:pointer">
+        <td><div class="cell-main">${esc(c.title)}</div><div class="cell-sub mono">${esc(c.number)}</div></td>
+        <td><span class="badge">${esc(c.type)}</span></td>
+        <td><div class="usercell"><div class="av" style="background:linear-gradient(135deg,${a2},${a1})">${initials(cl?.name)}</div><div class="info"><div class="nm" style="font-size:.86rem">${esc((cl?.name||'').split(' ').slice(0,2).join(' '))}</div></div></div></td>
+        <td class="muted" style="font-size:.84rem">${esc(c.court)}</td>
+        <td><span class="badge" style="background:${st.color}1a;color:${st.color}">${st.label}</span></td>
+        <td class="mono" style="font-weight:600">${c.value?fmtMoney(c.value)+' ر.ع':'—'}</td>
+        <td>${icon('chevL','')}</td>
+      </tr>`;}).join('')}</tbody>
+  </table></div></div></div>`;
+}
+function casesKanbanHTML(cases){
+  return `<div class="kanban">${Object.entries(CASE_STAGES).map(([k,st])=>{const col=cases.filter(c=>c.stage===k);
+    return `<div class="kb-col"><div class="kb-col-head"><span class="t"><span style="width:9px;height:9px;border-radius:50%;background:${st.color}"></span>${st.label}</span><span class="c mono">${col.length}</span></div>
+      ${col.map(c=>{const cl=Q.user(c.client);const pr={high:'danger',medium:'warn',low:'info'}[c.priority];
+        return `<div class="kb-card" data-open-case="${c.id}">
+          <div class="kb-card-num">${esc(c.number)}</div>
+          <div class="kb-card-title">${esc(c.title)}</div>
+          <div class="row" style="gap:7px"><span class="badge" style="font-size:.68rem">${esc(c.type)}</span>${c.priority==='high'?`<span class="badge badge-danger" style="font-size:.68rem">عاجلة</span>`:''}</div>
+          <div class="kb-card-foot"><span class="muted" style="font-size:.78rem">${esc((cl?.name||'').split(' ').slice(0,2).join(' '))}</span>${c.value?`<span class="mono" style="font-size:.76rem;font-weight:700">${fmtMoney(c.value)}</span>`:''}</div>
+        </div>`;}).join('')||`<div style="text-align:center;padding:20px;color:var(--muted-2);font-size:.82rem">لا قضايا</div>`}
+    </div>`;}).join('')}</div>`;
+}
+VIEW_BINDERS.cases=()=>{
+  $$('[data-cv]').forEach(b=>b.addEventListener('click',()=>{casesView=b.dataset.cv;render();bindCurrentView();}));
+  $$('[data-open-case]').forEach(el=>el.addEventListener('click',()=>navigate('caseDetail',{id:el.dataset.openCase})));
+  $$('[data-new-case]').forEach(b=>b.addEventListener('click',openNewCase));
+  const cs=$('#caseSearch');if(cs)cs.addEventListener('input',()=>{casesFilter.q=cs.value;const p=cs.selectionStart;render();bindCurrentView();const n=$('#caseSearch');if(n){n.focus();n.setSelectionRange(p,p);}});
+  const sf=$('#caseStageF');if(sf)sf.addEventListener('change',()=>{casesFilter.stage=sf.value;render();bindCurrentView();});
+  const tf=$('#caseTypeF');if(tf)tf.addEventListener('change',()=>{casesFilter.type=tf.value;render();bindCurrentView();});
+  const cf=$('#clearF');if(cf)cf.addEventListener('click',()=>{casesFilter={stage:'',type:'',q:''};render();bindCurrentView();});
+};
+
+function caseFormBody(c){
+  const clients=Q.clients();const lawyers=Q.lawyers();
+  return `<div class="grid-2" style="gap:0 16px">
+    <div class="field" style="grid-column:1/-1"><label>عنوان القضية <span class="req">*</span></label><input class="input" name="title" value="${esc(c?.title||'')}" placeholder="مثال: نزاع عقد إيجار تجاري"></div>
+    <div class="field"><label>رقم القضية</label><input class="input" name="number" value="${esc(c?.number||'')}" placeholder="2025/مدني/0000" dir="ltr" style="text-align:right"></div>
+    <div class="field"><label>نوع القضية <span class="req">*</span></label><select class="select" name="type">${CASE_TYPES.map(t=>`<option ${c?.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="field"><label>الموكّل <span class="req">*</span></label><select class="select" name="client"><option value="">— اختر —</option>${clients.map(cl=>`<option value="${cl.id}" ${c?.client===cl.id?'selected':''}>${esc(cl.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>المحامي المسؤول <span class="req">*</span></label><select class="select" name="lawyer">${lawyers.map(l=>`<option value="${l.id}" ${c?.lawyer===l.id?'selected':''}>${esc(l.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>المحكمة</label><select class="select" name="court">${COURTS.map(ct=>`<option ${c?.court===ct?'selected':''}>${ct}</option>`).join('')}</select></div>
+    <div class="field"><label>المرحلة</label><select class="select" name="stage">${Object.entries(CASE_STAGES).map(([k,s])=>`<option value="${k}" ${(c?.stage||'intake')===k?'selected':''}>${s.label}</option>`).join('')}</select></div>
+    <div class="field"><label>الخصم</label><input class="input" name="opponent" value="${esc(c?.opponent||'')}" placeholder="اسم الطرف الآخر"></div>
+    <div class="field"><label>قيمة المطالبة (ر.ع)</label><input class="input" name="value" type="number" value="${c?.value||''}" placeholder="0" dir="ltr" style="text-align:right"></div>
+    <div class="field" style="grid-column:1/-1"><label>الأولوية</label><select class="select" name="priority"><option value="high" ${c?.priority==='high'?'selected':''}>عالية</option><option value="medium" ${(c?.priority||'medium')==='medium'?'selected':''}>متوسطة</option><option value="low" ${c?.priority==='low'?'selected':''}>منخفضة</option></select></div>
+    <div class="field" style="grid-column:1/-1"><label>تفاصيل / ملاحظات</label><textarea class="textarea" name="desc" placeholder="ملخّص موضوع القضية...">${esc(c?.desc||'')}</textarea></div>
+  </div>`;
+}
+function openNewCase(){
+  modal({title:'إضافة قضية جديدة',icon:'folder',size:'lg',
+    body:`<form id="caseForm">${caseFormBody(null)}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ القضية</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>{m.querySelector('[data-save]').addEventListener('click',()=>saveCaseForm(m,null));}
+  });
+}
+function openEditCase(c){
+  modal({title:'تعديل القضية',icon:'edit',size:'lg',
+    body:`<form id="caseForm">${caseFormBody(c)}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ التعديلات</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>{m.querySelector('[data-save]').addEventListener('click',()=>saveCaseForm(m,c));}
+  });
+}
+function saveCaseForm(m,existing){
+  const f=m.querySelector('#caseForm');
+  const data={title:f.title.value.trim(),number:f.number.value.trim(),type:f.type.value,client:f.client.value,lawyer:f.lawyer.value,court:f.court.value,stage:f.stage.value,opponent:f.opponent.value.trim()||'—',value:Number(f.value.value)||0,priority:f.priority.value,desc:f.desc.value.trim()};
+  if(!data.title||!data.client||!data.lawyer)return toast('الرجاء تعبئة العنوان والموكّل والمحامي.','warn');
+  const u=currentUser();
+  if(existing){Object.assign(existing,data);DB.activity.unshift({id:uid('a'),org:DB.org.id,user:u.id,text:'عدّل القضية',target:existing.number,date:nowISO(),type:'case'});toast('تم حفظ تعديلات القضية','ok');}
+  else{
+    const c={id:uid('c'),org:DB.org.id,opened:nowISO(),created:nowISO(),...data};
+    if(!c.number)c.number=`${new Date().getFullYear()}/${c.type}/${Math.floor(Math.random()*9000+1000)}`;
+    DB.cases.unshift(c);
+    DB.activity.unshift({id:uid('a'),org:DB.org.id,user:u.id,text:'أضاف قضية جديدة',target:c.number,date:nowISO(),type:'case'});
+    toast('تمت إضافة القضية بنجاح','ok');
+  }
+  saveDB();closeModal();render();bindCurrentView();
+}
+
+/* ============================================================
+   VIEW: CASE DETAIL
+   ============================================================ */
+route('caseDetail',(p)=>{
+  const c=Q.case(p.id);
+  const u=currentUser();
+  if(!c)return shell('cases',emptyState('folder','القضية غير موجودة','ربما حُذفت. عُد إلى قائمة القضايا.',`<button class="btn btn-primary" data-nav="cases">← القضايا</button>`));
+  const st=CASE_STAGES[c.stage];const cl=Q.user(c.client);const lw=Q.user(c.lawyer);
+  const sessions=Q.sessionsFor(c.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const docs=Q.docsFor(c.id);
+  const invs=DB.invoices.filter(i=>i.case===c.id);
+  const [a1,a2]=avColor(cl?.name);
+  const canManage=Q.hasPerm(u,'cases.manage');
+
+  const content=`<div class="anim-up">
+    <button class="btn btn-ghost btn-sm" data-nav="cases" style="margin-bottom:16px">${icon('arrowRight')} رجوع للقضايا</button>
+
+    <div class="card card-pad" style="margin-bottom:20px;background:linear-gradient(135deg,var(--paper),var(--sand))">
+      <div class="row-between wrap-flex" style="align-items:flex-start;gap:18px">
+        <div style="flex:1;min-width:240px">
+          <div class="row gap-sm wrap-flex" style="margin-bottom:10px">
+            <span class="badge" style="background:${st.color}1a;color:${st.color}">${icon(st.icon)} ${st.label}</span>
+            <span class="badge">${esc(c.type)}</span>
+            ${c.priority==='high'?'<span class="badge badge-danger">عاجلة</span>':''}
+          </div>
+          <h2 style="font-family:var(--font-d);font-size:1.6rem;margin-bottom:8px">${esc(c.title)}</h2>
+          <div class="mono muted" style="font-size:.95rem">${esc(c.number)}</div>
+        </div>
+        ${canManage?`<div class="page-actions">
+          <button class="btn" data-edit-case>${icon('edit')} تعديل</button>
+          ${Q.hasPerm(u,'sessions.manage')?`<button class="btn btn-primary" data-add-session>${icon('plus')} جلسة</button>`:''}
+          ${Q.hasPerm(u,'cases.delete')?`<button class="btn btn-icon btn-danger" data-del-case title="حذف">${icon('trash')}</button>`:''}
+        </div>`:''}
+      </div>
+    </div>
+
+    <div class="grid-12">
+      <div class="col gap">
+        <div class="panel">
+          <div class="panel-head"><h3>${icon('info')} تفاصيل القضية</h3></div>
+          <div class="panel-body"><div class="detail-rows">
+            <div class="detail-row"><div class="dr-label">الموكّل</div><div class="dr-val"><div class="usercell"><div class="av" style="width:32px;height:32px;background:linear-gradient(135deg,${a2},${a1})">${initials(cl?.name)}</div><span>${esc(cl?.name||'—')}</span></div></div></div>
+            <div class="detail-row"><div class="dr-label">المحامي المسؤول</div><div class="dr-val">${esc(lw?.name||'—')}</div></div>
+            <div class="detail-row"><div class="dr-label">المحكمة</div><div class="dr-val">${esc(c.court)}</div></div>
+            <div class="detail-row"><div class="dr-label">الطرف الآخر</div><div class="dr-val">${esc(c.opponent||'—')}</div></div>
+            <div class="detail-row"><div class="dr-label">قيمة المطالبة</div><div class="dr-val mono">${c.value?fmtMoney(c.value)+' ر.ع':'—'}</div></div>
+            <div class="detail-row"><div class="dr-label">تاريخ الفتح</div><div class="dr-val">${fmtDate(c.opened)}</div></div>
+            ${c.desc?`<div class="detail-row"><div class="dr-label">التفاصيل</div><div class="dr-val" style="font-weight:400;line-height:1.7;color:var(--muted)">${esc(c.desc)}</div></div>`:''}
+          </div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>${icon('calendar')} الجلسات (${sessions.length})</h3>
+            ${Q.hasPerm(u,'sessions.manage')?`<button class="btn btn-ghost btn-sm" data-add-session>${icon('plus')} إضافة</button>`:''}</div>
+          <div class="panel-body flush">
+            ${sessions.length?sessions.map(s=>{const du=daysUntil(s.date);const done=s.status==='done';
+              return `<div class="list-item">
+                <div class="li-ico" style="background:var(--${done?'ok':'info'}-soft);color:var(--${done?'ok':'info'})">${icon(done?'checkCircle':'gavel')}</div>
+                <div class="li-body"><div class="li-title">${esc(s.title)}</div>
+                  <div class="li-meta"><span class="mono">${fmtDateTime(s.date)}</span><span class="dot-sep"></span>${esc(s.hall||s.court)}</div>
+                  ${s.note?`<div style="font-size:.82rem;color:var(--muted);margin-top:4px">${esc(s.note)}</div>`:''}</div>
+                <div class="li-side">
+                  ${done?'<span class="badge badge-ok">منتهية</span>':`<span class="badge badge-info">${du<=0?'اليوم':du===1?'غداً':'بعد '+du+' يوم'}</span>`}
+                  ${!done&&Q.hasPerm(u,'sessions.manage')?`<button class="btn btn-ghost btn-sm" data-remind="${s.id}">${icon('bell')} تذكير</button>`:''}
+                </div></div>`;}).join(''):emptyState('calendar','لا جلسات','لم تُجدول جلسات لهذه القضية بعد.')}
+          </div>
+        </div>
+      </div>
+
+      <div class="col gap">
+        <div class="panel">
+          <div class="panel-head"><h3>${icon('doc')} الوثائق (${docs.length})</h3>
+            ${Q.hasPerm(u,'documents.manage')?`<button class="btn btn-ghost btn-sm" data-add-doc>${icon('upload')}</button>`:''}</div>
+          <div class="panel-body flush">
+            ${docs.length?docs.map(d=>`<div class="list-item">
+              <div class="li-ico" style="background:var(--gold-soft);color:var(--gold)">${icon('doc')}</div>
+              <div class="li-body"><div class="li-title" style="font-size:.92rem">${esc(d.name)}</div>
+                <div class="li-meta"><span class="badge" style="font-size:.68rem">${esc(d.type)}</span><span class="mono">${esc(d.size)}</span><span class="dot-sep"></span>${timeAgo(d.date)}</div></div>
+              <button class="btn btn-icon btn-ghost btn-sm">${icon('download')}</button>
+            </div>`).join(''):emptyState('doc','لا وثائق','ارفع المستندات المتعلقة بالقضية.')}
+          </div>
+        </div>
+
+        ${Q.hasPerm(u,'billing.view')&&invs.length?`<div class="panel">
+          <div class="panel-head"><h3>${icon('money')} الفواتير</h3></div>
+          <div class="panel-body flush">
+            ${invs.map(inv=>{const tot=invoiceTotal(inv);const bal=invoiceBalance(inv);
+              const stB=inv.status==='paid'?'badge-ok':inv.status==='partial'?'badge-warn':'badge-danger';
+              const stL=inv.status==='paid'?'مسددة':inv.status==='partial'?'جزئية':'غير مسددة';
+              return `<div class="list-item"><div class="li-ico" style="background:var(--ok-soft);color:var(--ok)">${icon('money')}</div>
+                <div class="li-body"><div class="li-title mono" style="font-size:.9rem">${esc(inv.number)}</div>
+                  <div class="li-meta"><span class="mono">${fmtMoney(tot)} ر.ع</span>${bal>0?`<span class="dot-sep"></span><span style="color:var(--danger)">متبقٍ ${fmtMoney(bal)}</span>`:''}</div></div>
+                <span class="badge ${stB}">${stL}</span></div>`;}).join('')}
+          </div>
+        </div>`:''}
+
+        <div class="panel">
+          <div class="panel-head"><h3>${icon('user')} بيانات الموكّل</h3></div>
+          <div class="panel-body">
+            <div class="detail-rows">
+              <div class="detail-row"><div class="dr-label">الاسم</div><div class="dr-val">${esc(cl?.name||'—')}</div></div>
+              <div class="detail-row"><div class="dr-label">الهاتف</div><div class="dr-val mono" dir="ltr" style="text-align:right">${esc(cl?.phone||'—')}</div></div>
+              <div class="detail-row"><div class="dr-label">البريد</div><div class="dr-val" dir="ltr" style="text-align:right;font-size:.86rem">${esc(cl?.email||'—')}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  return shell('cases',content);
+});
+VIEW_BINDERS.caseDetail=(p)=>{
+  const c=Q.case(p.id);
+  $$('[data-nav]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.nav)));
+  const ec=$('[data-edit-case]');if(ec)ec.addEventListener('click',()=>openEditCase(c));
+  const as=$('[data-add-session]');if(as)as.addEventListener('click',()=>openNewSession(c.id));
+  $$('[data-add-session]').forEach(b=>b.addEventListener('click',()=>openNewSession(c.id)));
+  const ad=$('[data-add-doc]');if(ad)ad.addEventListener('click',()=>openAddDoc(c.id));
+  $$('[data-remind]').forEach(b=>b.addEventListener('click',()=>sendReminder(b.dataset.remind)));
+  const dc=$('[data-del-case]');if(dc)dc.addEventListener('click',()=>{
+    confirmDialog({title:'حذف القضية',message:`سيتم حذف "${c.title}" وكل جلساتها ووثائقها. لا يمكن التراجع.`,confirmText:'حذف نهائي',danger:true,onConfirm:()=>{
+      DB.cases=DB.cases.filter(x=>x.id!==c.id);DB.sessions=DB.sessions.filter(s=>s.case!==c.id);DB.documents=DB.documents.filter(d=>d.case!==c.id);
+      saveDB();toast('تم حذف القضية','info');navigate('cases');}});
+  });
+};
+
+/* ---------- SESSION & DOC modals (shared) ---------- */
+function sessionFormBody(s,fixedCaseId){
+  const cases=visibleCases();
+  return `<div class="grid-2" style="gap:0 16px">
+    <div class="field" style="grid-column:1/-1"><label>القضية <span class="req">*</span></label>
+      <select class="select" name="case" ${fixedCaseId?'disabled':''}>${cases.map(c=>`<option value="${c.id}" ${(s?.case||fixedCaseId)===c.id?'selected':''}>${esc(c.number)} — ${esc(c.title)}</option>`).join('')}</select></div>
+    <div class="field"><label>نوع الجلسة <span class="req">*</span></label><input class="input" name="title" value="${esc(s?.title||'')}" placeholder="مثال: جلسة مرافعة" list="sessTypes">
+      <datalist id="sessTypes"><option>جلسة مرافعة</option><option>جلسة نطق بالحكم</option><option>جلسة تحقيق</option><option>جلسة أولى</option><option>جلسة تأجيل</option></datalist></div>
+    <div class="field"><label>المحكمة</label><select class="select" name="court">${COURTS.map(ct=>`<option ${s?.court===ct?'selected':''}>${ct}</option>`).join('')}</select></div>
+    <div class="field"><label>التاريخ <span class="req">*</span></label><input class="input" name="date" type="date" value="${s?new Date(s.date).toISOString().slice(0,10):''}" dir="ltr"></div>
+    <div class="field"><label>الوقت <span class="req">*</span></label><input class="input" name="time" type="time" value="${s?String(new Date(s.date).getHours()).padStart(2,'0')+':'+String(new Date(s.date).getMinutes()).padStart(2,'0'):'09:00'}" dir="ltr"></div>
+    <div class="field" style="grid-column:1/-1"><label>القاعة</label><input class="input" name="hall" value="${esc(s?.hall||'')}" placeholder="مثال: القاعة 3"></div>
+    <div class="field" style="grid-column:1/-1"><label>ملاحظات</label><textarea class="textarea" name="note" placeholder="ملاحظات للجلسة...">${esc(s?.note||'')}</textarea></div>
+    <div style="grid-column:1/-1;background:var(--sand);border-radius:12px;padding:16px;margin-bottom:8px">
+      <div style="font-family:var(--font-d);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">${icon('bell')} تذكير الموكّل تلقائياً</div>
+      <div class="perm-row" style="padding:8px 0"><div class="perm-info"><div class="perm-name" style="font-size:.9rem">رسالة نصية SMS</div></div>
+        <label class="switch"><input type="checkbox" name="sms" ${(s?.remind?.sms??true)?'checked':''}><span class="track"></span></label></div>
+      <div class="perm-row" style="padding:8px 0"><div class="perm-info"><div class="perm-name" style="font-size:.9rem">بريد إلكتروني</div></div>
+        <label class="switch"><input type="checkbox" name="email" ${(s?.remind?.email??true)?'checked':''}><span class="track"></span></label></div>
+      <div class="field" style="margin:10px 0 0"><label style="font-size:.85rem">التذكير قبل الجلسة بـ</label>
+        <select class="select" name="before"><option value="1" ${(s?.remind?.before||1)==1?'selected':''}>يوم واحد</option><option value="2" ${(s?.remind?.before)==2?'selected':''}>يومين</option><option value="3" ${(s?.remind?.before)==3?'selected':''}>3 أيام</option></select></div>
+      <div class="field-hint" style="margin-top:8px">${icon('info')} التذكير محاكاة داخل النظام (إشعار + سجل). لإرساله فعلياً عبر SMS/بريد يلزم ربط مزوّد خدمة.</div>
+    </div>
+  </div>`;
+}
+function openNewSession(caseId){
+  modal({title:'إضافة جلسة',icon:'calendar',size:'lg',
+    body:`<form id="sessForm">${sessionFormBody(null,caseId)}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ الجلسة</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>saveSessionForm(m,null,caseId))
+  });
+}
+function openEditSession(s){
+  modal({title:'تعديل الجلسة',icon:'edit',size:'lg',
+    body:`<form id="sessForm">${sessionFormBody(s)}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>saveSessionForm(m,s))
+  });
+}
+function saveSessionForm(m,existing,fixedCaseId){
+  const f=m.querySelector('#sessForm');
+  const caseId=fixedCaseId||f.case.value;
+  const title=f.title.value.trim();const date=f.date.value;const time=f.time.value;
+  if(!title||!date||!time)return toast('الرجاء تعبئة النوع والتاريخ والوقت.','warn');
+  const dt=new Date(date+'T'+time);
+  const remind={sms:f.sms.checked,email:f.email.checked,before:Number(f.before.value),sent:existing?.remind?.sent||false};
+  const u=currentUser();
+  if(existing){Object.assign(existing,{case:caseId,title,court:f.court.value,date:dt.toISOString(),hall:f.hall.value.trim(),note:f.note.value.trim(),remind});toast('تم حفظ الجلسة','ok');}
+  else{DB.sessions.push({id:uid('s'),org:DB.org.id,case:caseId,title,court:f.court.value,date:dt.toISOString(),hall:f.hall.value.trim(),note:f.note.value.trim(),remind,status:'upcoming'});
+    DB.activity.unshift({id:uid('a'),org:DB.org.id,user:u.id,text:'حدّد جلسة',target:Q.caseNum(caseId),date:nowISO(),type:'session'});
+    const c=Q.case(caseId);if(c){DB.notifications.unshift({id:uid('n'),org:DB.org.id,user:c.client,type:'session',title:'جلسة جديدة في قضيتك',body:`${title} بتاريخ ${fmtDateTime(dt.toISOString())}`,date:nowISO(),read:false,icon:'calendar'});}
+    toast('تمت إضافة الجلسة بنجاح','ok');}
+  saveDB();closeModal();render();bindCurrentView();
+}
+function openAddDoc(caseId){
+  modal({title:'رفع وثيقة',icon:'upload',size:'',
+    body:`<form id="docForm">
+      <div class="field"><label>القضية</label><select class="select" name="case">${visibleCases().map(c=>`<option value="${c.id}" ${caseId===c.id?'selected':''}>${esc(c.number)} — ${esc(c.title)}</option>`).join('')}</select></div>
+      <div class="field"><label>اسم الوثيقة <span class="req">*</span></label><input class="input" name="name" placeholder="مثال: عقد الإيجار.pdf"></div>
+      <div class="field"><label>النوع</label><select class="select" name="type"><option>عقد</option><option>مذكرة</option><option>صحيفة</option><option>حكم</option><option>مستند</option><option>وكالة</option></select></div>
+      <div style="border:2px dashed var(--line-2);border-radius:12px;padding:28px;text-align:center;color:var(--muted);background:var(--sand)">
+        ${icon('upload','')}<div style="margin-top:8px;font-size:.9rem">اسحب الملف هنا أو اضغط للاختيار</div>
+        <div class="field-hint" style="margin-top:6px">(تجريبي — لن يُرفع ملف فعلي في هذه النسخة)</div></div>
+    </form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>{
+      const f=m.querySelector('#docForm');const name=f.name.value.trim();if(!name)return toast('أدخل اسم الوثيقة.','warn');
+      DB.documents.unshift({id:uid('d'),org:DB.org.id,case:f.case.value,name,type:f.type.value,size:(Math.random()*2+.2).toFixed(1)+' MB',by:currentUser().id,date:nowISO()});
+      saveDB();closeModal();toast('تمت إضافة الوثيقة','ok');render();bindCurrentView();})
+  });
+}
+
+/* ============================================================
+   VIEW: SESSIONS
+   ============================================================ */
+route('sessions',()=>{
+  const u=currentUser();
+  let sessions=DB.sessions.filter(canSeeSession).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const upcoming=sessions.filter(s=>s.status==='upcoming');
+  const past=sessions.filter(s=>s.status==='done');
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>الجلسات</h2><p>${upcoming.length} جلسة قادمة · ${past.length} منتهية</p></div>
+      ${Q.hasPerm(u,'sessions.manage')?`<button class="btn btn-primary" data-new-session>${icon('plus')} جلسة جديدة</button>`:''}
+    </div>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="panel-head"><h3>${icon('calendar')} الجلسات القادمة</h3></div>
+      <div class="panel-body flush">
+        ${upcoming.length?upcoming.map(s=>sessionRow(s,u)).join(''):emptyState('calendar','لا جلسات قادمة','أضف جلسة جديدة لتظهر هنا مع تذكير تلقائي للموكّل.')}
+      </div>
+    </div>
+    ${past.length?`<div class="panel"><div class="panel-head"><h3>${icon('checkCircle')} جلسات سابقة</h3></div>
+      <div class="panel-body flush" style="opacity:.85">${past.map(s=>sessionRow(s,u)).join('')}</div></div>`:''}
+  </div>`;
+  return shell('sessions',content);
+});
+function sessionRow(s,u){
+  const c=Q.case(s.case);const du=daysUntil(s.date);const done=s.status==='done';
+  const urg=done?'ok':du<=1?'danger':du<=3?'warn':'info';
+  const cl=c?Q.user(c.client):null;
+  return `<div class="list-item">
+    <div class="li-ico" style="background:var(--${urg}-soft);color:var(--${urg})">${icon(done?'checkCircle':'gavel')}</div>
+    <div class="li-body" data-open-case="${c?.id}" style="cursor:pointer">
+      <div class="li-title">${esc(s.title)} — ${esc(c?.title||'')}</div>
+      <div class="li-meta"><span class="mono">${esc(c?.number||'')}</span><span class="dot-sep"></span><span class="mono">${fmtDateTime(s.date)}</span><span class="dot-sep"></span>${esc(s.hall||s.court)}
+        ${cl?`<span class="dot-sep"></span>${icon('user')} ${esc(cl.name.split(' ').slice(0,2).join(' '))}`:''}</div>
+      ${!done&&s.remind?`<div class="li-meta" style="margin-top:4px">${s.remind.sms?`<span class="badge badge-ok" style="font-size:.66rem">${icon('phone')} SMS</span>`:''}${s.remind.email?`<span class="badge badge-info" style="font-size:.66rem">${icon('mail')} بريد</span>`:''}${s.remind.sent?`<span class="badge badge-gold" style="font-size:.66rem">✓ أُرسل التذكير</span>`:`<span class="muted" style="font-size:.74rem">تذكير قبل ${s.remind.before} يوم</span>`}</div>`:''}
+    </div>
+    <div class="li-side">
+      ${done?'<span class="badge badge-ok">منتهية</span>':`<span class="badge badge-${urg}">${du<=0?'اليوم':du===1?'غداً':'بعد '+du+' يوم'}</span>`}
+      ${!done&&Q.hasPerm(u,'sessions.manage')?`<div class="row gap-sm"><button class="btn btn-ghost btn-sm" data-remind="${s.id}" title="إرسال تذكير">${icon('bell')}</button><button class="btn btn-ghost btn-icon btn-sm" data-edit-session="${s.id}">${icon('edit')}</button></div>`:''}
+    </div>
+  </div>`;
+}
+VIEW_BINDERS.sessions=()=>{
+  $$('[data-open-case]').forEach(el=>el.addEventListener('click',()=>navigate('caseDetail',{id:el.dataset.openCase})));
+  $$('[data-new-session]').forEach(b=>b.addEventListener('click',()=>openNewSession(null)));
+  $$('[data-remind]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();sendReminder(b.dataset.remind);}));
+  $$('[data-edit-session]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openEditSession(DB.sessions.find(s=>s.id===b.dataset.editSession));}));
+};
+
+/* ============================================================
+   VIEW: CLIENTS
+   ============================================================ */
+route('clients',()=>{
+  const u=currentUser();
+  const clients=Q.clients();
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>الموكّلون</h2><p>${clients.length} موكّل مسجّل في المكتب</p></div>
+      <button class="btn btn-primary" data-add-client>${icon('plus')} موكّل جديد</button>
+    </div>
+    <div class="grid-3 stagger">
+      ${clients.map(cl=>{const cases=DB.cases.filter(c=>c.client===cl.id);const active=cases.filter(c=>c.stage!=='closed').length;
+        const[a1,a2]=avColor(cl.name);const outstanding=DB.invoices.filter(i=>i.client===cl.id).reduce((s,i)=>s+invoiceBalance(i),0);
+        return `<div class="card card-pad card-hover" data-client="${cl.id}" style="cursor:pointer">
+          <div class="row gap" style="margin-bottom:16px">
+            <div class="sb-avatar" style="width:52px;height:52px;font-size:1.1rem;background:linear-gradient(135deg,${a2},${a1});color:#fff">${initials(cl.name)}</div>
+            <div style="min-width:0"><div style="font-family:var(--font-d);font-weight:700;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(cl.name)}</div>
+              <div class="mono muted" style="font-size:.8rem" dir="ltr">${esc(cl.phone)}</div></div>
+          </div>
+          <div class="row gap" style="border-top:1px solid var(--line);padding-top:14px">
+            <div style="flex:1"><div class="mono" style="font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:var(--ink)">${cases.length}</div><div style="font-size:.76rem;color:var(--muted)">قضية</div></div>
+            <div style="flex:1"><div class="mono" style="font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:var(--gold)">${active}</div><div style="font-size:.76rem;color:var(--muted)">نشطة</div></div>
+            <div style="flex:1"><div class="mono" style="font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:${outstanding>0?'var(--danger)':'var(--ok)'}">${fmtMoney(outstanding)}</div><div style="font-size:.76rem;color:var(--muted)">مستحق</div></div>
+          </div>
+        </div>`;}).join('')}
+    </div>
+    ${!clients.length?emptyState('users','لا موكّلون بعد','أضف موكّلاً أو انتظر تسجيلهم الذاتي عبر الموقع.'):''}
+  </div>`;
+  return shell('clients',content);
+});
+VIEW_BINDERS.clients=()=>{
+  $$('[data-add-client]').forEach(b=>b.addEventListener('click',openAddClient));
+  $$('[data-client]').forEach(el=>el.addEventListener('click',()=>openClientDetail(el.dataset.client)));
+};
+function openAddClient(){
+  modal({title:'إضافة موكّل',icon:'user',
+    body:`<form id="clForm">
+      <div class="field"><label>الاسم الكامل <span class="req">*</span></label><input class="input" name="name" placeholder="اسم الموكّل أو الشركة"></div>
+      <div class="field"><label>البريد الإلكتروني <span class="req">*</span></label><input class="input" name="email" type="email" placeholder="name@example.com" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label>رقم الهاتف <span class="req">*</span></label><input class="input" name="phone" placeholder="+968 9XXX XXXX" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label>كلمة مرور مبدئية</label><input class="input" name="pass" value="1234" dir="ltr" style="text-align:right"><div class="field-hint">يدخل بها الموكّل ويمكنه تغييرها لاحقاً.</div></div>
+    </form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} إضافة الموكّل</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>{
+      const f=m.querySelector('#clForm');const name=f.name.value.trim();const email=f.email.value.trim().toLowerCase();const phone=f.phone.value.trim();
+      if(!name||!email||!phone)return toast('الرجاء تعبئة جميع الحقول.','warn');
+      if(DB.users.some(x=>x.email.toLowerCase()===email))return toast('هذا البريد مستخدم مسبقاً.','warn');
+      const cl={id:uid('u'),org:DB.org.id,name,email,phone,pass:f.pass.value||'1234',role:'client',perms:[],active:true,created:nowISO(),title:'موكّل'};
+      DB.users.push(cl);DB.activity.unshift({id:uid('a'),org:DB.org.id,user:currentUser().id,text:'أضاف موكّلاً',target:name,date:nowISO(),type:'user'});
+      saveDB();closeModal();toast('تمت إضافة الموكّل بنجاح','ok');render();bindCurrentView();})
+  });
+}
+function openClientDetail(id){
+  const cl=Q.user(id);const cases=DB.cases.filter(c=>c.client===id);const[a1,a2]=avColor(cl.name);
+  modal({title:cl.name,icon:'user',size:'lg',
+    body:`<div class="row gap" style="margin-bottom:20px">
+        <div class="sb-avatar" style="width:60px;height:60px;font-size:1.3rem;background:linear-gradient(135deg,${a2},${a1});color:#fff">${initials(cl.name)}</div>
+        <div><div class="row gap-sm" style="margin-bottom:4px"><span class="mono" dir="ltr">${esc(cl.phone)}</span></div>
+          <div class="muted" dir="ltr" style="text-align:right">${esc(cl.email)}</div>
+          <span class="badge ${cl.active?'badge-ok':'badge-danger'}" style="margin-top:6px">${cl.active?'حساب نشط':'موقوف'}</span></div></div>
+      <h4 style="font-family:var(--font-d);margin-bottom:12px">قضايا الموكّل (${cases.length})</h4>
+      ${cases.length?`<div class="panel"><div class="panel-body flush">${cases.map(c=>{const st=CASE_STAGES[c.stage];
+        return `<div class="list-item"><div class="li-ico" style="background:${st.color}1a;color:${st.color}">${icon(st.icon)}</div>
+          <div class="li-body"><div class="li-title" style="font-size:.92rem">${esc(c.title)}</div><div class="li-meta mono">${esc(c.number)}</div></div>
+          <span class="badge" style="background:${st.color}1a;color:${st.color}">${st.label}</span></div>`;}).join('')}</div></div>`:`<p class="muted">لا قضايا مرتبطة بعد.</p>`}`,
+    foot:`<button class="btn btn-primary" data-newcase>${icon('plus')} قضية لهذا الموكّل</button><button class="btn btn-ghost" data-close>إغلاق</button>`,
+    onMount:m=>{m.querySelector('[data-newcase]').addEventListener('click',()=>{closeModal();openNewCase();setTimeout(()=>{const sel=$('#caseForm')?.client;if(sel)sel.value=id;},100);});}
+  });
+}
+
+/* ============================================================
+   VIEW: DOCUMENTS
+   ============================================================ */
+route('documents',()=>{
+  const u=currentUser();
+  const docs=[...DB.documents].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>الوثائق</h2><p>${docs.length} وثيقة في أرشيف المكتب</p></div>
+      <button class="btn btn-primary" data-add-doc>${icon('upload')} رفع وثيقة</button>
+    </div>
+    <div class="panel"><div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>الوثيقة</th><th>النوع</th><th>القضية</th><th>الحجم</th><th>أضافها</th><th>التاريخ</th><th></th></tr></thead>
+      <tbody>${docs.map(d=>{const by=Q.user(d.by);
+        return `<tr><td><div class="usercell"><div class="li-ico" style="width:38px;height:38px;background:var(--gold-soft);color:var(--gold)">${icon('doc')}</div><div class="info"><div class="nm" style="font-size:.9rem">${esc(d.name)}</div></div></div></td>
+          <td><span class="badge">${esc(d.type)}</span></td>
+          <td class="mono cell-sub">${esc(Q.caseNum(d.case))}</td>
+          <td class="mono muted">${esc(d.size)}</td>
+          <td class="muted" style="font-size:.84rem">${esc((by?.name||'').split(' ').slice(0,2).join(' '))}</td>
+          <td class="muted" style="font-size:.84rem">${fmtDate(d.date)}</td>
+          <td><button class="btn btn-icon btn-ghost btn-sm">${icon('download')}</button></td></tr>`;}).join('')}</tbody>
+    </table></div></div></div>
+    ${!docs.length?emptyState('doc','لا وثائق','ابدأ برفع المستندات المتعلقة بقضاياك.'):''}
+  </div>`;
+  return shell('documents',content);
+});
+VIEW_BINDERS.documents=()=>{$$('[data-add-doc]').forEach(b=>b.addEventListener('click',()=>openAddDoc(null)));};
+
+/* ============================================================
+   VIEW: BILLING (invoices + payments)
+   ============================================================ */
+route('billing',()=>{
+  const u=currentUser();
+  const invoices=[...DB.invoices].sort((a,b)=>new Date(b.issued)-new Date(a.issued));
+  const totalBilled=invoices.reduce((s,i)=>s+invoiceTotal(i),0);
+  const totalPaid=invoices.reduce((s,i)=>s+(i.paid||0),0);
+  const outstanding=totalBilled-totalPaid;
+  const canManage=Q.hasPerm(u,'billing.manage');
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>الأتعاب والفواتير</h2><p>متابعة الفواتير والمدفوعات والمستحقات</p></div>
+      ${canManage?`<button class="btn btn-primary" data-new-inv>${icon('plus')} فاتورة جديدة</button>`:''}
+    </div>
+    <div class="stats-grid stagger" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><div class="stat-top"><div class="stat-ico ink">${icon('money')}</div></div><div class="stat-val mono">${fmtMoney(totalBilled)}</div><div class="stat-label">إجمالي الفواتير (ر.ع)</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ok">${icon('checkCircle')}</div></div><div class="stat-val mono" style="color:var(--ok)">${fmtMoney(totalPaid)}</div><div class="stat-label">المحصّل (ر.ع)</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ${outstanding>0?'danger':'ok'}">${icon('clock')}</div></div><div class="stat-val mono" style="color:${outstanding>0?'var(--danger)':'var(--ok)'}">${fmtMoney(outstanding)}</div><div class="stat-label">المستحق (ر.ع)</div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>${icon('money')} كل الفواتير</h3></div>
+      <div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>الفاتورة</th><th>الموكّل</th><th>القضية</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الاستحقاق</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${invoices.map(inv=>{const tot=invoiceTotal(inv);const bal=invoiceBalance(inv);const cl=Q.user(inv.client);
+          const stB=inv.status==='paid'?'badge-ok':inv.status==='partial'?'badge-warn':'badge-danger';
+          const stL=inv.status==='paid'?'مسددة':inv.status==='partial'?'جزئية':'غير مسددة';
+          const overdue=bal>0&&daysUntil(inv.due)<0;
+          return `<tr><td class="mono cell-main">${esc(inv.number)}</td>
+            <td>${esc((cl?.name||'').split(' ').slice(0,2).join(' '))}</td>
+            <td class="mono cell-sub">${esc(Q.caseNum(inv.case))}</td>
+            <td class="mono">${fmtMoney(tot)}</td>
+            <td class="mono" style="color:var(--ok)">${fmtMoney(inv.paid||0)}</td>
+            <td class="mono" style="color:${bal>0?'var(--danger)':'var(--muted)'}">${fmtMoney(bal)}</td>
+            <td class="muted" style="font-size:.84rem">${fmtDate(inv.due)}${overdue?'<br><span class="badge badge-danger" style="font-size:.62rem">متأخرة</span>':''}</td>
+            <td><span class="badge ${stB}">${stL}</span></td>
+            <td><div class="td-actions"><button class="btn btn-icon btn-ghost btn-sm" data-view-inv="${inv.id}" title="عرض">${icon('eye')}</button>
+              ${canManage&&bal>0?`<button class="btn btn-sm btn-gold" data-pay-inv="${inv.id}">دفعة</button>`:''}</div></td></tr>`;}).join('')}</tbody>
+      </table></div></div></div>
+    ${!invoices.length?emptyState('money','لا فواتير','أصدر أول فاتورة لأحد الموكّلين.'):''}
+  </div>`;
+  return shell('billing',content);
+});
+VIEW_BINDERS.billing=()=>{
+  $$('[data-new-inv]').forEach(b=>b.addEventListener('click',openNewInvoice));
+  $$('[data-pay-inv]').forEach(b=>b.addEventListener('click',()=>openPayment(b.dataset.payInv)));
+  $$('[data-view-inv]').forEach(b=>b.addEventListener('click',()=>openInvoiceView(b.dataset.viewInv)));
+};
+function openNewInvoice(){
+  const clients=Q.clients();
+  modal({title:'إصدار فاتورة',icon:'money',size:'lg',
+    body:`<form id="invForm">
+      <div class="grid-2" style="gap:0 16px">
+        <div class="field"><label>الموكّل <span class="req">*</span></label><select class="select" name="client" id="invClient"><option value="">— اختر —</option>${clients.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+        <div class="field"><label>القضية</label><select class="select" name="case" id="invCase"><option value="">— اختياري —</option></select></div>
+      </div>
+      <label style="font-weight:700;font-family:var(--font-d);font-size:.88rem;display:block;margin-bottom:8px">بنود الفاتورة</label>
+      <div id="invItems"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="addItem" style="margin-bottom:16px">${icon('plus')} إضافة بند</button>
+      <div class="field"><label>تاريخ الاستحقاق</label><input class="input" name="due" type="date" value="${dPlus(14).slice(0,10)}" dir="ltr"></div>
+      <div style="background:var(--sand);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--font-d);font-weight:700">الإجمالي</span><span class="mono" id="invTotal" style="font-family:var(--font-d);font-weight:800;font-size:1.5rem;color:var(--ink)">0 ر.ع</span></div>
+    </form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} إصدار الفاتورة</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>{
+      const itemsBox=m.querySelector('#invItems');
+      const addItem=(desc='',price='')=>{const row=document.createElement('div');row.className='inv-item-row';row.style.cssText='display:grid;grid-template-columns:1fr 110px 70px 36px;gap:8px;margin-bottom:8px';
+        row.innerHTML=`<input class="input" placeholder="وصف البند" value="${esc(desc)}" data-d><input class="input mono" type="number" placeholder="السعر" value="${price}" data-p dir="ltr"><input class="input mono" type="number" placeholder="الكمية" value="1" data-q dir="ltr"><button type="button" class="btn btn-icon btn-ghost btn-sm" data-rm>${icon('x')}</button>`;
+        itemsBox.appendChild(row);row.querySelector('[data-rm]').onclick=()=>{row.remove();recalc();};
+        row.querySelectorAll('input').forEach(i=>i.addEventListener('input',recalc));recalc();};
+      const recalc=()=>{let t=0;m.querySelectorAll('.inv-item-row').forEach(r=>{t+=(Number(r.querySelector('[data-p]').value)||0)*(Number(r.querySelector('[data-q]').value)||1);});m.querySelector('#invTotal').textContent=fmtMoney(t)+' ر.ع';};
+      addItem();m.querySelector('#addItem').onclick=()=>addItem();
+      const cs=m.querySelector('#invClient');cs.addEventListener('change',()=>{const cases=DB.cases.filter(c=>c.client===cs.value);m.querySelector('#invCase').innerHTML='<option value="">— اختياري —</option>'+cases.map(c=>`<option value="${c.id}">${esc(c.number)} — ${esc(c.title)}</option>`).join('');});
+      m.querySelector('[data-save]').addEventListener('click',()=>{
+        const f=m.querySelector('#invForm');if(!f.client.value)return toast('اختر الموكّل.','warn');
+        const items=[...m.querySelectorAll('.inv-item-row')].map(r=>({desc:r.querySelector('[data-d]').value.trim()||'أتعاب',price:Number(r.querySelector('[data-p]').value)||0,qty:Number(r.querySelector('[data-q]').value)||1})).filter(i=>i.price>0);
+        if(!items.length)return toast('أضف بنداً واحداً على الأقل بسعر.','warn');
+        const year=new Date().getFullYear();const num=`INV-${year}-${String(DB.invoices.length+50).padStart(3,'0')}`;
+        DB.invoices.unshift({id:uid('inv'),org:DB.org.id,number:num,case:f.case.value||null,client:f.client.value,items,issued:nowISO(),due:new Date(f.due.value).toISOString(),status:'unpaid',paid:0});
+        DB.activity.unshift({id:uid('a'),org:DB.org.id,user:currentUser().id,text:'أصدر فاتورة',target:num,date:nowISO(),type:'invoice'});
+        saveDB();closeModal();toast('تم إصدار الفاتورة','ok');render();bindCurrentView();});
+    }
+  });
+}
+function openPayment(invId){
+  const inv=DB.invoices.find(i=>i.id===invId);const bal=invoiceBalance(inv);
+  modal({title:'تسجيل دفعة',icon:'money',size:'sm',
+    body:`<p class="muted" style="margin-bottom:16px">فاتورة <b class="mono">${esc(inv.number)}</b> — المتبقي <b class="mono" style="color:var(--danger)">${fmtMoney(bal)} ر.ع</b></p>
+      <div class="field"><label>مبلغ الدفعة (ر.ع)</label><input class="input mono" id="payAmt" type="number" value="${bal}" max="${bal}" dir="ltr"></div>`,
+    foot:`<button class="btn btn-primary" data-ok>${icon('check')} تسجيل الدفعة</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-ok]').addEventListener('click',()=>{
+      const amt=Number(m.querySelector('#payAmt').value)||0;if(amt<=0)return toast('أدخل مبلغاً صحيحاً.','warn');
+      inv.paid=(inv.paid||0)+Math.min(amt,bal);const nb=invoiceBalance(inv);inv.status=nb<=0?'paid':'partial';
+      DB.activity.unshift({id:uid('a'),org:DB.org.id,user:currentUser().id,text:'سجّل دفعة على',target:inv.number,date:nowISO(),type:'invoice'});
+      const cl=Q.user(inv.client);if(cl)DB.notifications.unshift({id:uid('n'),org:DB.org.id,user:cl.id,type:'invoice',title:'تم تسجيل دفعتك',body:`دفعة ${fmtMoney(Math.min(amt,bal))} ر.ع على فاتورة ${inv.number}`,date:nowISO(),read:false,icon:'money'});
+      saveDB();closeModal();toast(`تم تسجيل دفعة ${fmtMoney(Math.min(amt,bal))} ر.ع`,'ok');render();bindCurrentView();})
+  });
+}
+function openInvoiceView(invId){
+  const inv=DB.invoices.find(i=>i.id===invId);const cl=Q.user(inv.client);const tot=invoiceTotal(inv);const bal=invoiceBalance(inv);
+  modal({title:'الفاتورة '+inv.number,icon:'money',size:'lg',
+    body:`<div style="background:var(--paper)">
+      <div class="inv-head"><div><div class="brand" style="margin-bottom:8px"><div class="brand-mark" style="width:38px;height:38px">${icon('scale')}</div><div class="brand-name" style="font-size:1.1rem"><b>${esc(DB.org.settings.siteName)}</b></div></div>
+        <div class="muted" style="font-size:.84rem">${esc(DB.org.address||'')}</div></div>
+        <div style="text-align:left"><div style="font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:var(--ink)">فاتورة</div><div class="mono" style="font-size:.9rem">${esc(inv.number)}</div></div></div>
+      <div class="grid-2" style="margin-bottom:20px"><div><div class="muted" style="font-size:.8rem;margin-bottom:4px">إلى</div><div style="font-family:var(--font-d);font-weight:700">${esc(cl?.name)}</div><div class="muted mono" style="font-size:.82rem" dir="ltr">${esc(cl?.phone||'')}</div></div>
+        <div style="text-align:left"><div class="muted" style="font-size:.8rem">تاريخ الإصدار: ${fmtDate(inv.issued)}</div><div class="muted" style="font-size:.8rem">الاستحقاق: ${fmtDate(inv.due)}</div>${inv.case?`<div class="muted mono" style="font-size:.8rem">القضية: ${esc(Q.caseNum(inv.case))}</div>`:''}</div></div>
+      <table class="inv-table"><thead><tr><th>البند</th><th style="width:80px">الكمية</th><th style="width:110px">السعر</th><th style="width:110px">الإجمالي</th></tr></thead>
+        <tbody>${inv.items.map(it=>`<tr><td>${esc(it.desc)}</td><td class="mono">${it.qty}</td><td class="mono">${fmtMoney(it.price)}</td><td class="mono">${fmtMoney(it.qty*it.price)}</td></tr>`).join('')}</tbody></table>
+      <div style="max-width:280px;margin-right:auto">
+        <div class="inv-total-row"><span>المجموع</span><span class="mono">${fmtMoney(tot)} ر.ع</span></div>
+        <div class="inv-total-row"><span>المدفوع</span><span class="mono" style="color:var(--ok)">${fmtMoney(inv.paid||0)} ر.ع</span></div>
+        <div class="inv-total-row grand"><span>المتبقي</span><span class="mono">${fmtMoney(bal)} ر.ع</span></div>
+      </div></div>`,
+    foot:`<button class="btn btn-primary" onclick="window.print()">${icon('print')} طباعة</button><button class="btn btn-ghost" data-close>إغلاق</button>`
+  });
+}
+
+/* ============================================================
+   VIEW: REPORTS
+   ============================================================ */
+route('reports',()=>{
+  const cases=DB.cases;const invoices=DB.invoices;
+  const byType={};CASE_TYPES.forEach(t=>{const n=cases.filter(c=>c.type===t).length;if(n)byType[t]=n;});
+  const maxType=Math.max(1,...Object.values(byType));
+  const byLawyer=Q.lawyers().map(l=>({name:l.name,count:cases.filter(c=>c.lawyer===l.id).length})).filter(x=>x.count).sort((a,b)=>b.count-a.count);
+  const maxLaw=Math.max(1,...byLawyer.map(x=>x.count));
+  const totalRev=invoices.reduce((s,i)=>s+(i.paid||0),0);
+  const totalBilled=invoices.reduce((s,i)=>s+invoiceTotal(i),0);
+  const collectRate=totalBilled?Math.round(totalRev/totalBilled*100):0;
+  const closedCount=cases.filter(c=>c.stage==='closed').length;
+  const winRate=cases.length?Math.round(closedCount/cases.length*100):0;
+  const content=`<div class="anim-up">
+    <div class="page-head"><div><h2>التقارير والمؤشرات</h2><p>نظرة تحليلية على أداء المكتب</p></div></div>
+    <div class="stats-grid stagger">
+      <div class="stat"><div class="stat-top"><div class="stat-ico gold">${icon('folder')}</div></div><div class="stat-val mono">${cases.length}</div><div class="stat-label">إجمالي القضايا</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ok">${icon('checkCircle')}</div></div><div class="stat-val mono">${closedCount}</div><div class="stat-label">قضايا منتهية</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico info">${icon('trending')}</div></div><div class="stat-val mono">${collectRate}%</div><div class="stat-label">نسبة التحصيل</div></div>
+      <div class="stat"><div class="stat-top"><div class="stat-ico ink">${icon('money')}</div></div><div class="stat-val mono">${fmtMoney(totalRev)}</div><div class="stat-label">الإيرادات (ر.ع)</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="panel"><div class="panel-head"><h3>${icon('chart')} القضايا حسب النوع</h3></div>
+        <div class="panel-body">${Object.entries(byType).map(([t,n])=>`
+          <div style="margin-bottom:14px"><div class="row-between" style="margin-bottom:6px"><span style="font-weight:600;font-size:.9rem">${t}</span><span class="mono" style="font-weight:700">${n}</span></div>
+            <div class="progress"><div class="progress-bar" style="width:${n/maxType*100}%"></div></div></div>`).join('')}</div></div>
+      <div class="panel"><div class="panel-head"><h3>${icon('award')} القضايا حسب المحامي</h3></div>
+        <div class="panel-body">${byLawyer.map(l=>`
+          <div style="margin-bottom:14px"><div class="row-between" style="margin-bottom:6px"><span style="font-weight:600;font-size:.9rem">${esc(l.name.split(' ').slice(0,3).join(' '))}</span><span class="mono" style="font-weight:700">${l.count}</span></div>
+            <div class="progress"><div class="progress-bar ink" style="width:${l.count/maxLaw*100}%"></div></div></div>`).join('')}</div></div>
+    </div>
+  </div>`;
+  return shell('reports',content);
+});
+
+/* ============================================================
+   VIEW: TEAM & PERMISSIONS (owner grants permissions)
+   ============================================================ */
+route('team',()=>{
+  const u=currentUser();
+  const staff=Q.staff();const clients=Q.clients();
+  const content=`<div class="anim-up">
+    <div class="page-head">
+      <div><h2>الفريق والصلاحيات</h2><p>أضف أعضاء الفريق وتحكّم في صلاحيات كل شخص</p></div>
+      <button class="btn btn-primary" data-add-member>${icon('plus')} عضو جديد</button>
+    </div>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="panel-head"><h3>${icon('shield')} فريق المكتب (${staff.length})</h3></div>
+      <div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>العضو</th><th>الدور</th><th>الصلاحيات</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${staff.map(m=>{const[a1,a2]=avColor(m.name);const isOwner=m.role==='owner';const permCount=(m.perms||[]).length;
+          return `<tr><td><div class="usercell"><div class="av" style="background:linear-gradient(135deg,${a2},${a1})">${initials(m.name)}</div>
+              <div class="info"><div class="nm">${esc(m.name.split(' ').slice(0,3).join(' '))}</div><div class="meta" dir="ltr" style="text-align:right">${esc(m.email)}</div></div></div></td>
+            <td><span class="badge" style="background:${ROLES[m.role].color}1a;color:${ROLES[m.role].color}">${icon(ROLES[m.role].icon)} ${ROLES[m.role].label}</span></td>
+            <td>${isOwner?'<span class="badge badge-gold">كل الصلاحيات</span>':`<span class="mono muted">${permCount} / ${PERMISSIONS.length}</span>`}</td>
+            <td><span class="badge ${m.active?'badge-ok':'badge-danger'}"><span class="dot"></span>${m.active?'نشط':'موقوف'}</span></td>
+            <td><div class="td-actions">${!isOwner?`<button class="btn btn-sm" data-perms="${m.id}">${icon('key')} الصلاحيات</button>
+              <button class="btn btn-icon btn-ghost btn-sm" data-toggle-active="${m.id}" title="${m.active?'إيقاف':'تفعيل'}">${icon(m.active?'lock':'check')}</button>`:'<span class="muted" style="font-size:.8rem">—</span>'}</div></td></tr>`;}).join('')}</tbody>
+      </table></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>${icon('users')} الموكّلون (${clients.length})</h3><span class="muted" style="font-size:.84rem">الموكّلون يسجّلون بأنفسهم أو تضيفهم أنت</span></div>
+      <div class="panel-body flush"><div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>الموكّل</th><th>الهاتف</th><th>قضايا</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${clients.map(m=>{const[a1,a2]=avColor(m.name);const cc=DB.cases.filter(c=>c.client===m.id).length;
+          return `<tr><td><div class="usercell"><div class="av" style="background:linear-gradient(135deg,${a2},${a1})">${initials(m.name)}</div>
+              <div class="info"><div class="nm">${esc(m.name.split(' ').slice(0,3).join(' '))}</div><div class="meta" dir="ltr" style="text-align:right">${esc(m.email)}</div></div></div></td>
+            <td class="mono muted" dir="ltr" style="text-align:right">${esc(m.phone)}</td>
+            <td class="mono">${cc}</td>
+            <td><span class="badge ${m.active?'badge-ok':'badge-danger'}"><span class="dot"></span>${m.active?'نشط':'موقوف'}</span></td>
+            <td><button class="btn btn-icon btn-ghost btn-sm" data-toggle-active="${m.id}" title="${m.active?'إيقاف':'تفعيل'}">${icon(m.active?'lock':'check')}</button></td></tr>`;}).join('')}</tbody>
+      </table></div></div>
+    </div>
+  </div>`;
+  return shell('team',content);
+});
+VIEW_BINDERS.team=()=>{
+  $$('[data-perms]').forEach(b=>b.addEventListener('click',()=>openPermissions(b.dataset.perms)));
+  $$('[data-add-member]').forEach(b=>b.addEventListener('click',openAddMember));
+  $$('[data-toggle-active]').forEach(b=>b.addEventListener('click',()=>{const m=Q.user(b.dataset.toggleActive);m.active=!m.active;saveDB();toast(m.active?'تم تفعيل الحساب':'تم إيقاف الحساب','info');render();bindCurrentView();}));
+};
+function openPermissions(userId){
+  const m=Q.user(userId);
+  const groups={};PERMISSIONS.forEach(p=>{(groups[p.group]=groups[p.group]||[]).push(p);});
+  modal({title:'صلاحيات: '+m.name.split(' ').slice(0,2).join(' '),icon:'key',size:'lg',
+    body:`<div class="row gap" style="margin-bottom:18px;padding:14px;background:var(--sand);border-radius:12px">
+        <span class="badge" style="background:${ROLES[m.role].color}1a;color:${ROLES[m.role].color}">${ROLES[m.role].label}</span>
+        <span class="muted" style="font-size:.86rem;flex:1">فعّل أو عطّل ما يستطيع هذا العضو الوصول إليه</span>
+        <button class="btn btn-ghost btn-sm" id="permPreset">إعادة للوضع الافتراضي</button></div>
+      <form id="permForm">${Object.entries(groups).map(([g,perms])=>`
+        <div style="margin-bottom:18px"><div class="sb-group-label" style="padding:0 0 8px">${g}</div>
+          <div class="perm-list">${perms.map(p=>`<div class="perm-row"><div class="perm-info"><div class="perm-name">${p.name}</div><div class="perm-desc mono" style="font-size:.74rem;opacity:.6">${p.key}</div></div>
+            <label class="switch"><input type="checkbox" value="${p.key}" ${(m.perms||[]).includes(p.key)?'checked':''}><span class="track"></span></label></div>`).join('')}</div>
+        </div>`).join('')}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ الصلاحيات</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:mm=>{
+      mm.querySelector('#permPreset').onclick=()=>{const def=ROLE_DEFAULT_PERMS[m.role]||[];mm.querySelectorAll('#permForm input').forEach(i=>i.checked=def.includes(i.value));};
+      mm.querySelector('[data-save]').addEventListener('click',()=>{
+        m.perms=[...mm.querySelectorAll('#permForm input:checked')].map(i=>i.value);
+        DB.activity.unshift({id:uid('a'),org:DB.org.id,user:currentUser().id,text:'حدّث صلاحيات',target:m.name.split(' ').slice(0,2).join(' '),date:nowISO(),type:'user'});
+        saveDB();closeModal();toast('تم حفظ الصلاحيات بنجاح','ok');render();bindCurrentView();});
+    }
+  });
+}
+function openAddMember(){
+  modal({title:'إضافة عضو للفريق',icon:'user',
+    body:`<form id="memForm">
+      <div class="field"><label>الاسم الكامل <span class="req">*</span></label><input class="input" name="name" placeholder="اسم العضو"></div>
+      <div class="field"><label>الدور <span class="req">*</span></label><select class="select" name="role">${Object.entries(ROLES).filter(([k])=>k!=='owner'&&k!=='client').map(([k,r])=>`<option value="${k}">${r.label}</option>`).join('')}</select></div>
+      <div class="field"><label>البريد الإلكتروني <span class="req">*</span></label><input class="input" name="email" type="email" placeholder="name@lexpro.om" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label>رقم الهاتف</label><input class="input" name="phone" placeholder="+968 9XXX XXXX" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label>كلمة مرور مبدئية</label><input class="input" name="pass" value="1234" dir="ltr" style="text-align:right"></div>
+      <div class="field-hint">${icon('info')} ستُمنح الصلاحيات الافتراضية للدور، ويمكنك تعديلها بعد الإضافة.</div>
+    </form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} إضافة العضو</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>{
+      const f=m.querySelector('#memForm');const name=f.name.value.trim();const email=f.email.value.trim().toLowerCase();
+      if(!name||!email)return toast('الرجاء تعبئة الاسم والبريد.','warn');
+      if(DB.users.some(x=>x.email.toLowerCase()===email))return toast('هذا البريد مستخدم مسبقاً.','warn');
+      const role=f.role.value;
+      DB.users.push({id:uid('u'),org:DB.org.id,name,email,phone:f.phone.value.trim(),pass:f.pass.value||'1234',role,perms:clone(ROLE_DEFAULT_PERMS[role]||[]),active:true,created:nowISO(),title:ROLES[role].label});
+      DB.activity.unshift({id:uid('a'),org:DB.org.id,user:currentUser().id,text:'أضاف عضواً للفريق',target:name,date:nowISO(),type:'user'});
+      saveDB();closeModal();toast('تمت إضافة العضو بنجاح','ok');render();bindCurrentView();})
+  });
+}
+
+/* ============================================================
+   VIEW: CMS (site editor + theme + subscriptions)
+   ============================================================ */
+let cmsTab='site';
+const THEMES=[
+  {id:'emerald',name:'زمرّدي عُماني',colors:['#0b3d2e','#b8893a','#f7f3ea']},
+  {id:'royal',name:'أزرق ملكي',colors:['#1a3a5c','#c9a227','#f4f6f9']},
+  {id:'burgundy',name:'عنّابي فاخر',colors:['#5c1a2e','#caa450','#f9f4f2']},
+  {id:'graphite',name:'رمادي أنيق',colors:['#2a2d34','#a8842c','#f5f5f3']},
+];
+route('cms',()=>{
+  const u=currentUser();const s=DB.org.settings;const org=DB.org;
+  const content=`<div class="anim-up">
+    <div class="page-head"><div><h2>لوحة إدارة الموقع</h2><p>تحكّم في محتوى موقعك وهويّته وباقات الاشتراك</p></div></div>
+    <div class="segmented" style="margin-bottom:22px">
+      <div class="seg ${cmsTab==='site'?'active':''}" data-tab="site">${icon('globe')} المحتوى</div>
+      <div class="seg ${cmsTab==='theme'?'active':''}" data-tab="theme">${icon('palette')} الهوية</div>
+      <div class="seg ${cmsTab==='subs'?'active':''}" data-tab="subs">${icon('award')} الاشتراكات</div>
+      <div class="seg ${cmsTab==='general'?'active':''}" data-tab="general">${icon('settings')} عام</div>
+    </div>
+    <div id="cmsContent">${cmsTabContent(cmsTab,s,org)}</div>
+  </div>`;
+  return shell('cms',content);
+});
+function cmsTabContent(tab,s,org){
+  if(tab==='site')return `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>${icon('edit')} نصوص الصفحة الرئيسية</h3></div>
+    <div class="panel-body"><form id="cmsSite">
+      <div class="field"><label>اسم الموقع / المكتب</label><input class="input" name="siteName" value="${esc(s.siteName)}"></div>
+      <div class="field"><label>الشعار النصّي (Tagline)</label><input class="input" name="tagline" value="${esc(s.tagline)}"></div>
+      <div class="field"><label>عنوان الواجهة الرئيسي</label><input class="input" name="heroTitle" value="${esc(s.heroTitle)}"></div>
+      <div class="field"><label>النص التعريفي</label><textarea class="textarea" name="heroSub">${esc(s.heroSub)}</textarea></div>
+      <button type="button" class="btn btn-primary" data-save-site>${icon('check')} حفظ المحتوى</button>
+    </form></div></div>
+    <div class="panel"><div class="panel-head"><h3>${icon('eye')} معاينة</h3></div>
+      <div class="panel-body"><div style="border:1px solid var(--line);border-radius:14px;padding:24px;background:linear-gradient(135deg,var(--paper),var(--sand))">
+        <div class="hero-eyebrow" style="margin-bottom:14px"><span class="dot"></span>معاينة حيّة</div>
+        <h3 id="prevTitle" style="font-family:var(--font-d);font-size:1.5rem;line-height:1.3;margin-bottom:10px">${esc(s.heroTitle)}</h3>
+        <p id="prevSub" style="color:var(--muted);line-height:1.6;font-size:.95rem">${esc(s.heroSub)}</p>
+        <button class="btn btn-primary btn-sm" style="margin-top:16px" disabled>ابدأ الآن</button>
+      </div></div></div></div>`;
+  if(tab==='theme')return `<div class="panel"><div class="panel-head"><h3>${icon('palette')} نظام الألوان</h3><span class="muted" style="font-size:.84rem">اختر هوية بصرية لموقعك ولوحتك</span></div>
+    <div class="panel-body"><div class="swatch-grid">${THEMES.map(t=>`
+      <div class="swatch ${s.theme===t.id?'sel':''}" data-theme-id="${t.id}">
+        <div class="swatch-colors">${t.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div>
+        <div class="swatch-name">${t.name}${s.theme===t.id?icon('check'):''}</div></div>`).join('')}</div>
+      <div class="field-hint" style="margin-top:16px">${icon('info')} في هذه النسخة التجريبية تُحفظ الهوية كإعداد. ربط الألوان الكامل بالواجهة يتم عند النشر.</div>
+    </div></div>`;
+  if(tab==='subs')return `<div class="panel"><div class="panel-head"><h3>${icon('award')} باقات الاشتراك</h3><button class="btn btn-ghost btn-sm" data-edit-plans>${icon('edit')} تعديل الأسعار</button></div>
+    <div class="panel-body"><div class="grid-3">${org.plans.map(p=>`
+      <div class="card card-pad ${p.featured?'':''}" style="${p.featured?'border-color:var(--gold);border-width:1.5px':''}">
+        ${p.featured?'<span class="badge badge-gold" style="margin-bottom:10px">★ مميّزة</span>':''}
+        <div style="font-family:var(--font-d);font-weight:700;font-size:1.15rem;margin-bottom:6px">${esc(p.name)}</div>
+        <div class="muted" style="font-size:.84rem;margin-bottom:14px">${esc(p.desc)}</div>
+        <div class="row" style="align-items:baseline;gap:5px;margin-bottom:4px"><span class="mono" style="font-family:var(--font-d);font-weight:800;font-size:2rem;color:var(--ink)">${p.monthly}</span><span class="muted">ر.ع/شهر</span></div>
+        <div class="muted mono" style="font-size:.8rem;margin-bottom:14px">${p.yearly} ر.ع سنوياً</div>
+        <div style="border-top:1px solid var(--line);padding-top:12px;font-size:.86rem;color:var(--muted)">
+          <div class="row gap-sm" style="margin-bottom:6px">${icon('users')} ${p.users<0?'مستخدمون غير محدودين':p.users+' مستخدمين'}</div>
+          <div class="row gap-sm">${icon('folder')} ${p.cases<0?'قضايا غير محدودة':p.cases+' قضية'}</div></div>
+      </div>`).join('')}</div>
+      <div style="margin-top:20px;padding:16px;background:var(--gold-soft);border-radius:12px" class="row gap">
+        ${icon('star')}<div><b style="font-family:var(--font-d)">باقتك الحالية: ${esc(org.plans.find(p=>p.id===org.plan)?.name)}</b>
+        <div style="font-size:.84rem;color:var(--muted);margin-top:2px">تتجدد في ${fmtDate(org.planRenews)}</div></div></div>
+    </div></div>`;
+  // general
+  return `<div class="panel"><div class="panel-head"><h3>${icon('settings')} إعدادات عامة</h3></div>
+    <div class="panel-body"><form id="cmsGen">
+      <div class="perm-row"><div class="perm-info"><div class="perm-name">السماح بتسجيل الموكّلين ذاتياً</div><div class="perm-desc">يستطيع الزبائن إنشاء حساب بأنفسهم من الموقع</div></div>
+        <label class="switch"><input type="checkbox" name="allowClientSignup" ${s.allowClientSignup?'checked':''}><span class="track"></span></label></div>
+      <div class="perm-row"><div class="perm-info"><div class="perm-name">تفعيل تذكيرات SMS</div><div class="perm-desc">إرسال تذكيرات الجلسات عبر الرسائل النصية</div></div>
+        <label class="switch"><input type="checkbox" name="smsEnabled" ${s.smsEnabled?'checked':''}><span class="track"></span></label></div>
+      <div class="perm-row"><div class="perm-info"><div class="perm-name">تفعيل تذكيرات البريد</div><div class="perm-desc">إرسال تذكيرات الجلسات عبر البريد الإلكتروني</div></div>
+        <label class="switch"><input type="checkbox" name="emailEnabled" ${s.emailEnabled?'checked':''}><span class="track"></span></label></div>
+      <div class="field" style="margin-top:18px;max-width:300px"><label>التذكير الافتراضي قبل الجلسة بـ</label>
+        <select class="select" name="remindDefault"><option value="1" ${s.remindDefault==1?'selected':''}>يوم واحد</option><option value="2" ${s.remindDefault==2?'selected':''}>يومين</option><option value="3" ${s.remindDefault==3?'selected':''}>3 أيام</option></select></div>
+      <button type="button" class="btn btn-primary" data-save-gen style="margin-top:16px">${icon('check')} حفظ الإعدادات</button>
+    </form>
+    <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--line)">
+      <div style="font-family:var(--font-d);font-weight:700;margin-bottom:6px;color:var(--danger)">منطقة الخطر</div>
+      <p class="muted" style="font-size:.88rem;margin-bottom:14px">إعادة تعيين كل البيانات إلى الوضع الافتراضي (تُحذف كل التغييرات).</p>
+      <button class="btn btn-danger" data-reset-db>${icon('refresh')} إعادة تعيين بيانات النظام</button></div>
+    </div></div>`;
+}
+VIEW_BINDERS.cms=()=>{
+  $$('[data-tab]').forEach(t=>t.addEventListener('click',()=>{cmsTab=t.dataset.tab;render();bindCurrentView();}));
+  const ss=$('[data-save-site]');if(ss)ss.addEventListener('click',()=>{
+    const f=$('#cmsSite');const s=DB.org.settings;s.siteName=f.siteName.value.trim();s.tagline=f.tagline.value.trim();s.heroTitle=f.heroTitle.value.trim();s.heroSub=f.heroSub.value.trim();
+    saveDB();toast('تم حفظ محتوى الموقع','ok');render();bindCurrentView();});
+  // live preview
+  const f=$('#cmsSite');if(f){f.heroTitle.addEventListener('input',()=>{$('#prevTitle').textContent=f.heroTitle.value;});f.heroSub.addEventListener('input',()=>{$('#prevSub').textContent=f.heroSub.value;});}
+  $$('[data-theme-id]').forEach(sw=>sw.addEventListener('click',()=>{DB.org.settings.theme=sw.dataset.themeId;saveDB();toast('تم تحديث الهوية البصرية','ok');render();bindCurrentView();}));
+  const sg=$('[data-save-gen]');if(sg)sg.addEventListener('click',()=>{
+    const f=$('#cmsGen');const s=DB.org.settings;s.allowClientSignup=f.allowClientSignup.checked;s.smsEnabled=f.smsEnabled.checked;s.emailEnabled=f.emailEnabled.checked;s.remindDefault=Number(f.remindDefault.value);
+    saveDB();toast('تم حفظ الإعدادات','ok');});
+  const rd=$('[data-reset-db]');if(rd)rd.addEventListener('click',()=>confirmDialog({title:'إعادة تعيين البيانات',message:'سيتم حذف كل القضايا والموكّلين والتغييرات والعودة للبيانات التجريبية الأصلية. متأكد؟',confirmText:'نعم، إعادة تعيين',danger:true,onConfirm:()=>{resetDB();toast('تمت إعادة التعيين','info');navigate('dashboard');}}));
+  const ep=$('[data-edit-plans]');if(ep)ep.addEventListener('click',openEditPlans);
+};
+function openEditPlans(){
+  modal({title:'تعديل أسعار الباقات',icon:'money',size:'lg',
+    body:`<form id="plansForm">${DB.org.plans.map((p,i)=>`
+      <div style="padding:14px;background:var(--sand);border-radius:12px;margin-bottom:12px">
+        <div style="font-family:var(--font-d);font-weight:700;margin-bottom:10px">${esc(p.name)}</div>
+        <div class="grid-2" style="gap:0 12px">
+          <div class="field" style="margin:0"><label style="font-size:.82rem">شهري (ر.ع)</label><input class="input mono" data-i="${i}" data-k="monthly" value="${p.monthly}" type="number" dir="ltr"></div>
+          <div class="field" style="margin:0"><label style="font-size:.82rem">سنوي (ر.ع)</label><input class="input mono" data-i="${i}" data-k="yearly" value="${p.yearly}" type="number" dir="ltr"></div>
+        </div></div>`).join('')}</form>`,
+    foot:`<button class="btn btn-primary" data-save>${icon('check')} حفظ الأسعار</button><button class="btn btn-ghost" data-close>إلغاء</button>`,
+    onMount:m=>m.querySelector('[data-save]').addEventListener('click',()=>{
+      m.querySelectorAll('input[data-i]').forEach(inp=>{DB.org.plans[+inp.dataset.i][inp.dataset.k]=Number(inp.value)||0;});
+      saveDB();closeModal();toast('تم تحديث أسعار الباقات','ok');render();bindCurrentView();})
+  });
+}
+
+/* ============================================================
+   VIEW: MY CASE (client)
+   ============================================================ */
+route('myCase',()=>{
+  const u=currentUser();
+  const cases=DB.cases.filter(c=>c.client===u.id);
+  const content=`<div class="anim-up">
+    <div class="page-head"><div><h2>قضاياي</h2><p>تفاصيل قضاياك وجلساتها ووثائقها</p></div></div>
+    ${cases.length?cases.map(c=>{const st=CASE_STAGES[c.stage];const lw=Q.user(c.lawyer);
+      const sessions=DB.sessions.filter(s=>s.case===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const docs=Q.docsFor(c.id);
+      return `<div class="card card-pad" style="margin-bottom:20px">
+        <div class="row-between wrap-flex" style="align-items:flex-start;margin-bottom:18px">
+          <div><div class="row gap-sm" style="margin-bottom:8px"><span class="badge" style="background:${st.color}1a;color:${st.color}">${icon(st.icon)} ${st.label}</span><span class="badge">${esc(c.type)}</span></div>
+            <h3 style="font-family:var(--font-d);font-size:1.3rem;margin-bottom:4px">${esc(c.title)}</h3>
+            <div class="mono muted" style="font-size:.88rem">${esc(c.number)}</div></div>
+        </div>
+        <div class="detail-rows" style="margin-bottom:18px">
+          <div class="detail-row"><div class="dr-label">المحامي</div><div class="dr-val">${esc(lw?.name||'—')}</div></div>
+          <div class="detail-row"><div class="dr-label">المحكمة</div><div class="dr-val">${esc(c.court)}</div></div>
+          ${c.desc?`<div class="detail-row"><div class="dr-label">الحالة</div><div class="dr-val" style="font-weight:400;color:var(--muted);line-height:1.6">${esc(c.desc)}</div></div>`:''}
+        </div>
+        <div class="grid-2">
+          <div><div style="font-family:var(--font-d);font-weight:700;font-size:.92rem;margin-bottom:10px">${icon('calendar')} الجلسات</div>
+            ${sessions.length?sessions.slice(0,4).map(s=>{const du=daysUntil(s.date);const done=s.status==='done';
+              return `<div class="row gap-sm" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="li-ico" style="width:34px;height:34px;background:var(--${done?'ok':'info'}-soft);color:var(--${done?'ok':'info'})">${icon(done?'check':'gavel')}</div>
+                <div style="flex:1"><div style="font-weight:600;font-size:.88rem">${esc(s.title)}</div><div class="mono muted" style="font-size:.78rem">${fmtDateTime(s.date)}</div></div>
+                ${!done?`<span class="badge badge-info" style="font-size:.66rem">${du<=0?'اليوم':du===1?'غداً':'بعد '+du+'ي'}</span>`:''}</div>`;}).join(''):'<p class="muted" style="font-size:.86rem">لا جلسات</p>'}</div>
+          <div><div style="font-family:var(--font-d);font-weight:700;font-size:.92rem;margin-bottom:10px">${icon('doc')} الوثائق</div>
+            ${docs.length?docs.map(d=>`<div class="row gap-sm" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="li-ico" style="width:34px;height:34px;background:var(--gold-soft);color:var(--gold)">${icon('doc')}</div>
+              <div style="flex:1"><div style="font-weight:600;font-size:.86rem">${esc(d.name)}</div><div class="muted" style="font-size:.76rem">${esc(d.type)} · ${esc(d.size)}</div></div></div>`).join(''):'<p class="muted" style="font-size:.86rem">لا وثائق متاحة</p>'}</div>
+        </div>
+      </div>`;}).join(''):emptyState('folder','لا توجد قضايا','لم تُربط أي قضية بحسابك بعد. سيتواصل معك المكتب قريباً.')}
+  </div>`;
+  return shell('myCase',content);
+});
+
+/* ============================================================
+   VIEW: MESSAGES (client)
+   ============================================================ */
+route('messages',()=>{
+  const u=currentUser();
+  const myCase=DB.cases.find(c=>c.client===u.id);
+  const lawyer=myCase?Q.user(myCase.lawyer):null;
+  const msgs=DB.messages.filter(m=>m.from===u.id||m.to===u.id).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const[a1,a2]=avColor(lawyer?.name||'x');
+  const content=`<div class="anim-up">
+    <div class="page-head"><div><h2>الرسائل</h2><p>تواصل مباشر مع محاميك المسؤول</p></div></div>
+    <div class="panel" style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 220px);min-height:460px">
+      ${lawyer?`<div class="panel-head"><div class="usercell"><div class="av" style="background:linear-gradient(135deg,${a2},${a1})">${initials(lawyer.name)}</div>
+        <div class="info"><div class="nm">${esc(lawyer.name.split(' ').slice(0,3).join(' '))}</div><div class="meta">${esc(lawyer.title||'محامٍ')} · ${esc(myCase.number)}</div></div></div></div>`:''}
+      <div style="flex:1;overflow-y:auto;padding:20px" id="chatScroll">
+        ${myCase?(msgs.length?msgs.map(m=>{const mine=m.from===u.id;
+          return `<div style="display:flex;justify-content:${mine?'flex-start':'flex-end'};margin-bottom:12px">
+            <div style="max-width:72%;padding:12px 16px;border-radius:16px;${mine?'background:var(--ink);color:#fff;border-bottom-right-radius:4px':'background:var(--sand-2);border-bottom-left-radius:4px'}">
+              <div style="font-size:.94rem;line-height:1.5">${esc(m.body)}</div>
+              <div style="font-size:.7rem;opacity:.7;margin-top:5px" class="mono">${fmtDateTime(m.date)}</div></div></div>`;}).join(''):`<div class="empty"><div class="empty-ico">${icon('msg')}</div><h4>ابدأ المحادثة</h4><p>أرسل رسالتك الأولى لمحاميك المسؤول عن القضية.</p></div>`):emptyState('msg','لا توجد قضية','تحتاج قضية مرتبطة بحسابك للتواصل مع محامٍ.')}
+      </div>
+      ${myCase?`<form id="clientMsgForm" style="padding:14px;border-top:1px solid var(--line);display:flex;gap:10px">
+        <input class="input" name="msg" placeholder="اكتب رسالتك هنا..." style="flex:1" autocomplete="off">
+        <button class="btn btn-primary" type="submit">${icon('send')} إرسال</button></form>`:''}
+    </div>
+  </div>`;
+  return shell('messages',content);
+});
+VIEW_BINDERS.messages=()=>{
+  const mf=$('#clientMsgForm');if(mf)mf.addEventListener('submit',e=>{e.preventDefault();sendClientMessage(mf);});
+  const cs=$('#chatScroll');if(cs)cs.scrollTop=cs.scrollHeight;
+};
+
+/* ============================================================
+   VIEW: PROFILE
+   ============================================================ */
+route('profile',()=>{
+  const u=currentUser();const[a1,a2]=avColor(u.name);
+  const content=`<div class="anim-up content-narrow">
+    <div class="page-head"><div><h2>الملف الشخصي</h2><p>بياناتك وإعدادات حسابك</p></div></div>
+    <div class="card card-pad" style="margin-bottom:20px">
+      <div class="row gap-lg wrap-flex">
+        <div class="sb-avatar" style="width:88px;height:88px;font-size:2rem;background:linear-gradient(135deg,${a2},${a1});color:#fff">${initials(u.name)}</div>
+        <div style="flex:1;min-width:200px"><h3 style="font-family:var(--font-d);font-size:1.4rem">${esc(u.name)}</h3>
+          <div class="muted" style="margin:4px 0" dir="ltr">${esc(u.email)}</div>
+          <span class="badge" style="background:${ROLES[u.role].color}1a;color:${ROLES[u.role].color}">${icon(ROLES[u.role].icon)} ${ROLES[u.role].label}</span></div>
+      </div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>${icon('user')} تعديل البيانات</h3></div>
+      <div class="panel-body"><form id="profForm">
+        <div class="grid-2" style="gap:0 16px">
+          <div class="field"><label>الاسم الكامل</label><input class="input" name="name" value="${esc(u.name)}"></div>
+          <div class="field"><label>رقم الهاتف</label><input class="input" name="phone" value="${esc(u.phone||'')}" dir="ltr" style="text-align:right"></div>
+        </div>
+        <div class="field"><label>البريد الإلكتروني</label><input class="input" name="email" value="${esc(u.email)}" dir="ltr" style="text-align:right"></div>
+        <div class="field"><label>كلمة مرور جديدة (اختياري)</label><input class="input" name="pass" type="password" placeholder="اتركها فارغة للإبقاء على الحالية"></div>
+        <button type="button" class="btn btn-primary" data-save-prof>${icon('check')} حفظ التغييرات</button>
+      </form></div></div>
+  </div>`;
+  return shell('profile',content);
+});
+VIEW_BINDERS.profile=()=>{
+  const sp=$('[data-save-prof]');if(sp)sp.addEventListener('click',()=>{
+    const u=currentUser();const f=$('#profForm');const email=f.email.value.trim().toLowerCase();
+    if(DB.users.some(x=>x.id!==u.id&&x.email.toLowerCase()===email))return toast('البريد مستخدم من حساب آخر.','warn');
+    u.name=f.name.value.trim()||u.name;u.phone=f.phone.value.trim();u.email=email||u.email;if(f.pass.value)u.pass=f.pass.value;
+    saveDB();toast('تم حفظ بياناتك','ok');render();bindCurrentView();});
+};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+// patch navigate to always re-bind the current view after render
+const _navigate=navigate;
+navigate=function(view,params={}){_navigate(view,params);bindCurrentView();};
+
+function boot(){
+  initTheme();
+  loadDB();
+  loadSession();
+  if(SESSION&&currentUser()){
+    const h=location.hash.replace('#','');
+    if(h){const[v,id]=h.split('/');CURRENT=ROUTES[v]?{view:v,params:id?{id}:{}}:{view:'dashboard',params:{}};}
+    else CURRENT={view:'dashboard',params:{}};
+  }else{
+    clearSession();
+    CURRENT={view:'landing',params:{}};
+  }
+  render();
+  bindCurrentView();
+  window.addEventListener('hashchange',()=>{
+    if(!SESSION)return;
+    const h=location.hash.replace('#','');const[v,id]=h.split('/');
+    if(ROUTES[v]&&(v!==CURRENT.view||id!==CURRENT.params.id)){CURRENT={view:v,params:id?{id}:{}};render();bindCurrentView();}
+  });
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
+else boot();
+</script>
+</html>
